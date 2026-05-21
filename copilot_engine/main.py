@@ -12,6 +12,11 @@ from routes.report_routes import (
     router as report_router
 )
 
+from routes.copilot import (
+    router as copilot_router
+)
+
+
 setup_logging()
 
 app = FastAPI()
@@ -19,3 +24,7 @@ app = FastAPI()
 app.add_middleware(RequestContextMiddleware)
 
 app.include_router(report_router)
+
+app.include_router(
+    copilot_router
+)
