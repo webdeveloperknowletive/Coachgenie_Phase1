@@ -1,0 +1,4 @@
+*.env
+backend.zip/
+client.zip/
+*__pycache__/

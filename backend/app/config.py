@@ -43,6 +43,7 @@
 
 from pydantic_settings import BaseSettings
 from typing import List
+from pydantic import field_validator
 
 
 class Settings(BaseSettings):
@@ -52,7 +53,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql+asyncpg://postgres:Aman%40319@localhost:5432/erp"
 
-    SECRET_KEY: str = "change_this_to_64_random_chars"
+    SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
@@ -67,6 +68,13 @@ class Settings(BaseSettings):
             for o in self.ALLOWED_ORIGINS.split(",")
             if o.strip()
         ]
+        
+    @field_validator("SECRET_KEY")
+    @classmethod
+    def secret_key_must_be_strong(cls, v: str) -> str:
+        if len(v) < 32 or v == "change_this_to_64_random_chars":
+            raise ValueError("SECRET_KEY must be at least 32 chars and not the default placeholder")
+        return v
 
     class Config:
         env_file = ".env"

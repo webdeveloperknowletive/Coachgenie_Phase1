@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:Aman@319@localhost:5432/erp")
-DATABASE_URL = "postgresql+asyncpg://postgres:Lokesh128@localhost:5432/erp"
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set")
 
 engine = create_async_engine(
     DATABASE_URL,
