@@ -49,6 +49,7 @@ class AdmissionCreate(BaseModel):
     grade:          Optional[str]       = None
     board_name:     Optional[str]       = None   # ← ADD
     batch_name:     Optional[str]       = None   # ← ADD
+    batch_id:       Optional[uuid.UUID] = None
     subjects:       Optional[List[str]] = None
     status:         Optional[str]       = "PENDING_DOCS"
     phone:        Optional[str] = None
@@ -90,6 +91,8 @@ class AdmissionUpdate(BaseModel):
     grade:              Optional[str]             = None
     board_name:     Optional[str]        = None   # ← ADD
     batch_name:     Optional[str]        = None   # ← ADD
+    batch_id:       Optional[uuid.UUID]  = None
+    batch_id:       Optional[uuid.UUID] = None
     subjects:           Optional[List[str]]       = None
     fee_amount:         Optional[float]           = None
     fee_paid:           Optional[float]           = None
@@ -167,6 +170,8 @@ class AdmissionOut(BaseModel):
     grade:         Optional[str]        = None
     board_name:     Optional[str]        = None   # ← ADD
     batch_name:     Optional[str]        = None   # ← ADD
+    batch_id:       Optional[uuid.UUID]  = None
+    batch_id:       Optional[uuid.UUID] = None
     subjects:      Optional[List[str]]  = None
     fee_amount:    Optional[float]      = None
     fee_paid:      Optional[float]      = None

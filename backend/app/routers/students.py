@@ -17,15 +17,7 @@ async def list_students(
     result = await student_service.get_students(db, str(tenant.id), page, limit, search)
     return {"success": True, **result}
 
-@router.post("/", status_code=201)
-async def create_student(
-    body: StudentCreate,
-    db: DB,
-    tenant=Depends(get_tenant),
-    current_user=Depends(require_roles("owner", "counselor")),
-):
-    student = await student_service.create_student(db, str(tenant.id), body.model_dump())
-    return {"success": True, "data": StudentOut.model_validate(student)}
+
 
 @router.get("/{student_id}")
 async def get_student(

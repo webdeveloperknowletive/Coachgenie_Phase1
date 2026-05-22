@@ -3,7 +3,8 @@ from sqlalchemy import String, Boolean, Text, Date, ForeignKey, text, UniqueCons
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
 from app.database import Base
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import String, Boolean, Text, Date, ForeignKey, text, UniqueConstraint, Index, JSON
+
 
 class Student(Base):
     __tablename__ = "students"
@@ -20,7 +21,7 @@ class Student(Base):
     admission_id: Mapped[uuid.UUID | None] = mapped_column(
     UUID(as_uuid=True),
     ForeignKey("admissions.id", ondelete="SET NULL"),
-    nullable=True, unique=True, index=True,
+    nullable=False, unique=True, index=True,
     )
     joined_at = mapped_column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=True)
     enrollment_no: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -42,11 +43,7 @@ class Student(Base):
     school_name: Mapped[str] = mapped_column(String(200), nullable=True)
     current_class: Mapped[str] = mapped_column(String(50), nullable=True)
     target_exam: Mapped[str] = mapped_column(String(150), nullable=True)
-    subjects: Mapped[list[str]] = mapped_column(
-    ARRAY(String),
-    nullable=True,
-    default=list
-    )
+    subjects: Mapped[list] = mapped_column(JSON, nullable=True, default=list)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     joined_at = mapped_column(Date, nullable=True)
     left_at = mapped_column(Date, nullable=True)

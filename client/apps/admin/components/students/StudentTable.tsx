@@ -64,16 +64,38 @@ export function StudentTable({ students, onDelete, onEdit }: StudentTableProps) 
       header: "Grade",
       cell: ({ getValue }) => <span className="text-sm">{getValue<string>()}</span>,
     },
+    // {
+    //   accessorKey: "subjects",
+    //   header: "Subjects",
+    //   cell: ({ getValue }) => (
+    //     <div className="flex flex-wrap gap-1">
+    //       {(getValue<string[]>()).slice(0, 2).map(s => (
+    //         <span key={s} className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{s}</span>
+    //       ))}
+    //     </div>
+    //   ),
+    // },
     {
       accessorKey: "subjects",
       header: "Subjects",
-      cell: ({ getValue }) => (
-        <div className="flex flex-wrap gap-1">
-          {(getValue<string[]>()).slice(0, 2).map(s => (
-            <span key={s} className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{s}</span>
-          ))}
-        </div>
-      ),
+      cell: ({ getValue }) => {
+        const subjects = (getValue<string[]>() ?? []).filter(s => s && s !== "N/A");
+        if (!subjects.length) return <span className="text-xs text-muted-foreground">—</span>;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {subjects.slice(0, 2).map(s => (
+              <span key={s} className="rounded-full bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[10px] font-medium">
+                {s}
+              </span>
+            ))}
+            {subjects.length > 2 && (
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                +{subjects.length - 2}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "fees",

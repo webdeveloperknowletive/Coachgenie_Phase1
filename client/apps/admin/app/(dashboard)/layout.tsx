@@ -1,19 +1,3 @@
-// import { AppShell }   from "@/components/layout/AppShell";
-// import { RbacGuard }  from "@/components/guards/RbacGuard";
-// import { TenantGuard } from "@/components/guards/TenantGuard";
-
-// export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <TenantGuard>
-//       {/* <RbacGuard allowed={["SUPER_ADMIN", "ADMIN", "COACH"]}> */}
-//       <RbacGuard allowed={["owner", "counselor", "tutor"]}>
-//         <AppShell>{children}</AppShell>
-//       </RbacGuard>
-//     </TenantGuard>
-//   );
-// }
-
-
 "use client";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";

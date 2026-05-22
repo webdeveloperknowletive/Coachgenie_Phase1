@@ -9,14 +9,17 @@
 #     email: Optional[EmailStr] = None
 #     parent_name: Optional[str] = None
 #     parent_phone: Optional[str] = None
-#     parent_contact_number: Optional[str] = None  # ✅ added
-#     school_name: Optional[str] = None             # ✅ added
+#     parent_contact_number: Optional[str] = None
+#     school_name: Optional[str] = None
 #     source: str = "website"
 #     interested_course: Optional[str] = None
 #     grade: Optional[str] = None
 #     notes: Optional[str] = None
 #     follow_up_date: Optional[str] = None
 #     assigned_to: Optional[uuid.UUID] = None
+#     # ── NEW ──────────────────────────────────────────────────────────────────
+#     board_name: Optional[str] = None
+#     batch_id: Optional[uuid.UUID] = None
 
 
 # class LeadUpdate(BaseModel):
@@ -25,8 +28,8 @@
 #     email: Optional[EmailStr] = None
 #     parent_name: Optional[str] = None
 #     parent_phone: Optional[str] = None
-#     parent_contact_number: Optional[str] = None  # ✅ added
-#     school_name: Optional[str] = None             # ✅ added
+#     parent_contact_number: Optional[str] = None
+#     school_name: Optional[str] = None
 #     source: Optional[str] = None
 #     status: Optional[str] = None
 #     interested_course: Optional[str] = None
@@ -34,6 +37,9 @@
 #     notes: Optional[str] = None
 #     follow_up_date: Optional[str] = None
 #     assigned_to: Optional[uuid.UUID] = None
+#     # ── NEW ──────────────────────────────────────────────────────────────────
+#     board_name: Optional[str] = None
+#     batch_id: Optional[uuid.UUID] = None
 
 
 # class LeadOut(BaseModel):
@@ -41,19 +47,32 @@
 #     full_name: str
 #     phone: str
 #     email: Optional[str] = None
-#     parent_name: Optional[str] = None            # ✅ added
-#     parent_phone: Optional[str] = None           # ✅ added
-#     parent_contact_number: Optional[str] = None  # ✅ added
-#     school_name: Optional[str] = None            # ✅ added
+#     parent_name: Optional[str] = None
+#     parent_phone: Optional[str] = None
+#     parent_contact_number: Optional[str] = None
+#     school_name: Optional[str] = None
 #     source: str
 #     status: str
 #     interested_course: Optional[str] = None
 #     grade: Optional[str] = None
 #     follow_up_date: Optional[str] = None
 #     notes: Optional[str] = None
+#     # ── NEW ──────────────────────────────────────────────────────────────────
+#     board_name: Optional[str] = None
+#     batch_id: Optional[uuid.UUID] = None
+#     batch_name: Optional[str] = None          # resolved from the joined batch relationship
 
 #     class Config:
 #         from_attributes = True
+
+#     # Resolve batch_name from the ORM relationship automatically
+#     # @classmethod
+#     # def model_validate(cls, obj, *args, **kwargs):
+#     #     instance = super().model_validate(obj, *args, **kwargs)
+#     #     # If the ORM object has a loaded batch relationship, copy its name
+#     #     if hasattr(obj, "batch") and obj.batch is not None:
+#     #         instance.batch_name = obj.batch.name
+#     #     return instance
 
 
 # class ActivityCreate(BaseModel):
@@ -70,7 +89,7 @@
 #         from_attributes = True
 
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 import uuid
 
 
@@ -88,9 +107,9 @@ class LeadCreate(BaseModel):
     notes: Optional[str] = None
     follow_up_date: Optional[str] = None
     assigned_to: Optional[uuid.UUID] = None
-    # ── NEW ──────────────────────────────────────────────────────────────────
     board_name: Optional[str] = None
     batch_id: Optional[uuid.UUID] = None
+    subjects: Optional[List[str]] = []          # ← added
 
 
 class LeadUpdate(BaseModel):
@@ -108,9 +127,9 @@ class LeadUpdate(BaseModel):
     notes: Optional[str] = None
     follow_up_date: Optional[str] = None
     assigned_to: Optional[uuid.UUID] = None
-    # ── NEW ──────────────────────────────────────────────────────────────────
     board_name: Optional[str] = None
     batch_id: Optional[uuid.UUID] = None
+    subjects: Optional[List[str]] = None        # ← added
 
 
 class LeadOut(BaseModel):
@@ -128,22 +147,13 @@ class LeadOut(BaseModel):
     grade: Optional[str] = None
     follow_up_date: Optional[str] = None
     notes: Optional[str] = None
-    # ── NEW ──────────────────────────────────────────────────────────────────
     board_name: Optional[str] = None
     batch_id: Optional[uuid.UUID] = None
-    batch_name: Optional[str] = None          # resolved from the joined batch relationship
+    batch_name: Optional[str] = None
+    subjects: Optional[List[str]] = []          # ← added
 
     class Config:
         from_attributes = True
-
-    # Resolve batch_name from the ORM relationship automatically
-    # @classmethod
-    # def model_validate(cls, obj, *args, **kwargs):
-    #     instance = super().model_validate(obj, *args, **kwargs)
-    #     # If the ORM object has a loaded batch relationship, copy its name
-    #     if hasattr(obj, "batch") and obj.batch is not None:
-    #         instance.batch_name = obj.batch.name
-    #     return instance
 
 
 class ActivityCreate(BaseModel):

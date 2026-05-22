@@ -27,8 +27,11 @@ class Admission(Base):
         ForeignKey("leads.id", ondelete="SET NULL"),
         nullable=True,
     )
-    # FIX: removed orphan `student_id` — it was defined but never populated or FK-linked.
-    # Add back with a proper FK once a students table exists.
+    batch_id: Mapped[uuid.UUID | None] = mapped_column(
+    UUID(as_uuid=True),
+    ForeignKey("batches.id", ondelete="SET NULL"),
+    nullable=True,
+    )
 
     admission_number: Mapped[str] = mapped_column(String(50), nullable=False)
     academic_year: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -74,6 +77,11 @@ class Admission(Base):
     grade: Mapped[str | None] = mapped_column(String(50), nullable=True)
     board_name:   Mapped[str | None] = mapped_column(String(100), nullable=True)  # ← ADD
     batch_name:   Mapped[str | None] = mapped_column(String(100), nullable=True)  # ← ADD
+    batch_id:     Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("batches.id", ondelete="SET NULL"),
+        nullable=True,
+    )
     subjects: Mapped[list] = mapped_column(JSON, nullable=True, default=list)
 
     # ── Fee fields (quick-access without parsing JSON) ─────────────────────────

@@ -316,22 +316,22 @@ export function LeadTable({ leads, onView, onDelete }: LeadTableProps) {
     },
 
     // ── Assigned ───────────────────────────────────────────────────────────
-    {
-      accessorKey: "assignedTo",
-      header: "Assigned",
-      cell: ({ getValue }) => {
-        const val = getValue<string>();
-        if (!val) return <span className="text-xs text-muted-foreground">—</span>;
-        return (
-          <div className="flex items-center gap-1.5">
-            <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center text-[9px] font-bold text-primary shrink-0">
-              {val.split(" ").map((n) => n[0]).join("")}
-            </div>
-            <span className="text-xs text-muted-foreground truncate max-w-[80px]">{val}</span>
-          </div>
-        );
-      },
-    },
+    // {
+    //   accessorKey: "assignedTo",
+    //   header: "Assigned",
+    //   cell: ({ getValue }) => {
+    //     const val = getValue<string>();
+    //     if (!val) return <span className="text-xs text-muted-foreground">—</span>;
+    //     return (
+    //       <div className="flex items-center gap-1.5">
+    //         <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center text-[9px] font-bold text-primary shrink-0">
+    //           {val.split(" ").map((n) => n[0]).join("")}
+    //         </div>
+    //         <span className="text-xs text-muted-foreground truncate max-w-[80px]">{val}</span>
+    //       </div>
+    //     );
+    //   },
+    // },
 
     // ── Date ───────────────────────────────────────────────────────────────
     {

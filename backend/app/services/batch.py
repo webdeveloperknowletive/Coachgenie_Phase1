@@ -89,15 +89,24 @@ async def create_batch(db: AsyncSession, tenant_id: str, data: dict) -> Batch:
     return batch
 
 
+# async def update_batch(db: AsyncSession, tenant_id: str,
+#                        batch_id: str, data: dict) -> Batch:
+#     batch = await get_batch(db, tenant_id, batch_id)
+#     for key, value in data.items():
+#         if value is not None:
+#             setattr(batch, key, value)
+#     await db.flush()
+#     return await _attach_student_ids(db, batch)
 async def update_batch(db: AsyncSession, tenant_id: str,
                        batch_id: str, data: dict) -> Batch:
     batch = await get_batch(db, tenant_id, batch_id)
     for key, value in data.items():
-        if value is not None:
+        # Allow empty lists (e.g. clearing subjects) but skip None
+        if value is not None and hasattr(batch, key):
             setattr(batch, key, value)
-    await db.flush()
+    await db.commit()
+    await db.refresh(batch)
     return await _attach_student_ids(db, batch)
-
 
 # ── Enrollment ─────────────────────────────────────────────────
 
@@ -157,8 +166,10 @@ async def remove_student(db: AsyncSession, batch_id: str, student_id: str):
 async def get_batch_students(db: AsyncSession, tenant_id: str, batch_id: str) -> list:
     """Return full Student objects enrolled in a batch."""
     from app.models.student import Student
+    from sqlalchemy.orm import selectinload
     result = await db.execute(
         select(Student)
+        .options(selectinload(Student.batch_enrollments))
         .join(BatchStudent, BatchStudent.student_id == Student.id)
         .where(
             and_(

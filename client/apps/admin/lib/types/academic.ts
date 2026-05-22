@@ -23,6 +23,7 @@ export interface Student {
     paid:   number;
     due:    number;
   };
+  targetExam?: string;
 }
 
 export interface Batch {
@@ -39,6 +40,7 @@ export interface Batch {
   room:      string;
   maxSize:   number;
   syllabus:  SyllabusTopic[];
+  subjects?: string[];
 }
 
 export interface SyllabusTopic {
