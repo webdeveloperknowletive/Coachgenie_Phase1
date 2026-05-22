@@ -274,3 +274,58 @@ while remaining:
 - structured
 - professional
 """
+
+def build_performance_analysis_prompt(student_data: dict, metrics: dict) -> str:
+    return f"""
+Analyze the following student performance data and return a structured JSON report.
+
+Student: {student_data.get('name')} | Class: {student_data.get('batch')} | Target: {student_data.get('target_exam')}
+
+Exam metrics:
+- Subjects: {metrics.get('subjects')}
+- Average score: {metrics.get('avg_score')}%
+- Score trend (last 4 tests): {metrics.get('trend')}
+- Rank in batch: {metrics.get('rank')} of {metrics.get('batch_size')}
+- Weakest topic: {metrics.get('weakest_topic')}
+
+Attendance: {metrics.get('attendance_pct')}% this month
+
+Return ONLY valid JSON matching the StudentPerformanceReport schema. No prose outside JSON.
+"""
+
+def build_parent_report_prompt(student_data: dict, metrics: dict) -> str:
+    return f"""
+Generate a parent-facing progress report. Warm, encouraging tone. No technical jargon.
+No negative labels. Focus on growth areas and next steps.
+
+Student: {student_data.get('name')} | Month: {metrics.get('month')}
+Attendance: {metrics.get('attendance_pct')}%
+Recent test average: {metrics.get('avg_score')}%
+Notable improvement: {metrics.get('improvement_area')}
+Needs focus: {metrics.get('focus_area')}
+
+Return ONLY valid JSON matching the ParentReport schema.
+"""
+
+def build_risk_assessment_prompt(student_data: dict, metrics: dict) -> str:
+    return f"""
+Assess academic risk level for this student. Be conservative — only flag genuine risk.
+
+Student: {student_data.get('name')}
+Attendance last 30 days: {metrics.get('attendance_pct')}%
+Score trend: {metrics.get('trend')} (positive = improving)
+Missed assignments: {metrics.get('missed_assignments')}
+Fee status: {metrics.get('fee_status')}
+
+Risk levels: low | medium | high
+Return ONLY valid JSON matching the RiskAssessment schema.
+"""
+
+def build_summary_prompt(student_data: dict, period: str) -> str:
+    return f"""
+Generate a concise one-paragraph growth card summary for {student_data.get('name')} 
+covering {period}. 3-4 sentences max. Positive framing. No scores or numbers — 
+qualitative narrative only.
+
+Return ONLY valid JSON matching the GrowthCardSummary schema.
+"""

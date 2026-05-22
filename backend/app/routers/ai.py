@@ -5,9 +5,42 @@ from app.schemas.ai import (
     ChatResponse, SessionOut, MessageOut
 )
 from app.services import ai as ai_service
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+import httpx
+
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
+COPILOT_URL = "http://localhost:8001"
+
+class CopilotChatRequest(BaseModel):
+    message: str
+    context: str | None = None
+
+
+@router.post("/copilot/chat")
+async def copilot_chat(body: CopilotChatRequest):
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+
+            response = await client.post(
+                f"{COPILOT_URL}/copilot/chat",
+                json={
+                    "message": body.message,
+                    "context": body.context,
+                },
+            )
+
+        return response.json()
+
+    except Exception as e:
+        return {
+            "success": False,
+            "message": str(e),
+        }
 
 @router.post("/sessions", status_code=201)
 async def start_session(
@@ -25,17 +58,64 @@ async def start_session(
     )
     return {"success": True, "data": SessionOut.model_validate(session)}
 
+@router.post("/copilot/chat")
+async def copilot_chat(
+    body: CopilotChatRequest,
+):
+
+    try:
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+
+            response = await client.post(
+                f"{COPILOT_URL}/copilot/chat",
+                json={
+                    "message": body.message,
+                    "context": body.context,
+                    "user_id": body.user_id or "demo-user",
+                },
+            )
+
+        return response.json()
+
+    except Exception as e:
+
+        return {
+            "success": False,
+            "message": str(e),
+        }
 
 @router.post("/sessions/{session_id}/chat")
 async def chat(
+
     session_id: str,
+
     body: ChatRequest,
+
     db: DB,
+
     tenant=Depends(get_tenant),
+
     current_user=Depends(get_current_user),
 ):
-    result = await ai_service.chat(db, str(tenant.id), session_id, body.message)
-    return {"success": True, "data": result}
+
+    result = await ai_service.chat(
+
+        db=db,
+
+        tenant_id=str(tenant.id),
+
+        user_id=str(current_user.id),
+
+        session_id=session_id,
+
+        message=body.message,
+    )
+
+    return {
+        "success": True,
+        "data": result,
+    }
 
 
 @router.post("/sessions/{session_id}/end")
@@ -82,3 +162,4 @@ async def list_features(tenant=Depends(get_tenant)):
             {"id": "institute_analytics", "name": "Institute Analytics",  "description": "Data insights for institute owners"},
         ]
     }
+    

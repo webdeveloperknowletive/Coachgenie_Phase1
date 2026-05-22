@@ -1,22 +1,22 @@
 # ai/dependencies/tool_dependencies.py
 
-from tools.student.performance_tool import (
+from copilot_engine.tools.student.performance_tool import (
     PerformanceTool,
 )
 
-from tools.student.attendance_tools import (
+from copilot_engine.tools.student.attendance_tools import (
     AttendanceTool,
 )
 
-from tools.student.risk_tool import (
+from copilot_engine.tools.student.risk_tool import (
     RiskTool,
 )
 
-from tools.student.summary_tool import (
+from copilot_engine.tools.student.summary_tool import (
     SummaryTool,
 )
 
-from dependencies.service_dependencies import (
+from copilot_engine.dependencies.service_dependencies import (
     get_backend_client,
 )
 

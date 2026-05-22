@@ -1,12 +1,12 @@
 # ai/dependencies/student_dependencies.py
 
-from agents.student_agent import StudentAgent
+from copilot_engine.agents.student_agent import StudentAgent
 
-from dependencies.model_dependencies import (
+from copilot_engine.dependencies.model_dependencies import (
     get_model_router,
 )
 
-from dependencies.tool_dependencies import (
+from copilot_engine.dependencies.tool_dependencies import (
     get_performance_tool,
     get_attendance_tool,
     get_risk_tool,

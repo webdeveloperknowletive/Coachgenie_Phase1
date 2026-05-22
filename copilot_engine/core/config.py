@@ -65,6 +65,10 @@ class Settings(BaseSettings):
         os.getenv("BACKEND_API_BASE_URL")
     )
 
+    BACKEND_API_BASE_URL_API: str = (
+        os.getenv("BACKEND_API_BASE_URL_API")
+    )
+
     BACKEND_API_TIMEOUT: int = 30
 
     INTERNAL_API_KEY: Optional[str] = None

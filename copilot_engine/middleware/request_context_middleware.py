@@ -4,7 +4,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
-from core.logging_config import (
+from copilot_engine.core.logging_config import (
     generate_request_id,
     generate_trace_id,
     set_request_context,

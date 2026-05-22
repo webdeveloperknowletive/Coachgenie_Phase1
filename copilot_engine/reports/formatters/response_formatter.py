@@ -1,7 +1,7 @@
 import textwrap
 from typing import List
 
-from reports.schemas.report_schema import (
+from copilot_engine.reports.schemas.report_schema import (
     ReportSchema,
     ReportSection,
 )

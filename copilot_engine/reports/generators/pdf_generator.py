@@ -1,6 +1,10 @@
 from pathlib import Path
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from fastapi import HTTPException
+from reportlab.lib.styles import StyleSheet1
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 from reportlab.platypus import (
     SimpleDocTemplate,
@@ -25,7 +29,7 @@ from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from core.logging_config import (
+from copilot_engine.core.logging_config import (
     logging,
 )
 
@@ -66,50 +70,27 @@ class PDFGenerator:
 
         try:
 
-            # =============================================
-            # CREATE OUTPUT DIRECTORY
-            # =============================================
+            # =====================================================
+            # OUTPUT DIRECTORY (SAFE)
+            # =====================================================
+            output_dir = Path(cls.OUTPUT_DIR)
+            output_dir.mkdir(parents=True, exist_ok=True)
 
-            output_dir = Path(
-                cls.OUTPUT_DIR
-            )
-
-            output_dir.mkdir(
-                parents=True,
-                exist_ok=True,
-            )
-
-            # =============================================
-            # SAFE FILENAME
-            # =============================================
-
+            # =====================================================
+            # SAFE FILENAME GENERATION
+            # =====================================================
             if not filename:
+                timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+                filename = f"report_{timestamp}"
 
-                timestamp = (
-                    datetime.utcnow()
-                    .strftime(
-                        "%Y%m%d_%H%M%S"
-                    )
-                )
-
-                filename = (
-                    f"report_{timestamp}"
-                )
-
-            if not filename.endswith(
-                ".pdf"
-            ):
-
+            if not filename.endswith(".pdf"):
                 filename += ".pdf"
 
-            file_path = (
-                output_dir / filename
-            )
+            file_path = output_dir / filename
 
-            # =============================================
-            # CREATE DOCUMENT
-            # =============================================
-
+            # =====================================================
+            # DOCUMENT SETUP (ISOLATED PER REQUEST)
+            # =====================================================
             document = SimpleDocTemplate(
                 str(file_path),
                 pagesize=A4,
@@ -119,208 +100,132 @@ class PDFGenerator:
                 bottomMargin=40,
             )
 
-            # =============================================
-            # STYLES
-            # =============================================
-
+            # =====================================================
+            # FRESH STYLES (NO GLOBAL MUTATION)
+            # =====================================================
             styles = cls._build_styles()
 
-            # =============================================
-            # BUILD STORY
-            # =============================================
-
-            story = []
+            # =====================================================
+            # STORY BUILDING
+            # =====================================================
+            story: List = []
 
             for line in content.splitlines():
 
-                stripped_line = (
-                    line.strip()
-                )
+                line = line.strip()
 
-                # -----------------------------------------
-                # EMPTY LINES
-                # -----------------------------------------
-
-                if not stripped_line:
-
-                    story.append(
-                        Spacer(1, 10)
-                    )
-
+                # -------------------------
+                # EMPTY LINE
+                # -------------------------
+                if not line:
+                    story.append(Spacer(1, 10))
                     continue
 
-                # -----------------------------------------
-                # SECTION DIVIDERS
-                # -----------------------------------------
-
-                if (
-                    stripped_line.startswith("=")
-                    and len(stripped_line) > 20
-                ):
-
-                    story.append(
-                        Spacer(1, 12)
-                    )
-
+                # -------------------------
+                # SECTION DIVIDER
+                # -------------------------
+                if line.startswith("=") and len(line) > 20:
+                    story.append(Spacer(1, 12))
                     continue
 
-                # -----------------------------------------
-                # TITLES
-                # -----------------------------------------
-
-                if cls._is_title(
-                    stripped_line
-                ):
-
+                # -------------------------
+                # TITLE
+                # -------------------------
+                if cls._is_title(line):
                     story.append(
-                        Paragraph(
-                            stripped_line,
-                            styles["title"],
-                        )
+                        Paragraph(line, styles["CustomTitle"])
                     )
-
-                    story.append(
-                        Spacer(1, 14)
-                    )
-
+                    story.append(Spacer(1, 14))
                     continue
 
-                # -----------------------------------------
-                # SECTION HEADERS
-                # -----------------------------------------
-
-                if cls._is_section_header(
-                    stripped_line
-                ):
-
+                # -------------------------
+                # HEADING
+                # -------------------------
+                if cls._is_section_header(line):
                     story.append(
-                        Paragraph(
-                            stripped_line,
-                            styles["heading"],
-                        )
+                        Paragraph(line, styles["CustomHeading"])
                     )
-
-                    story.append(
-                        Spacer(1, 10)
-                    )
-
+                    story.append(Spacer(1, 10))
                     continue
 
-                # -----------------------------------------
-                # NORMAL PARAGRAPH
-                # -----------------------------------------
-
+                # -------------------------
+                # BODY TEXT
+                # -------------------------
                 story.append(
-                    Paragraph(
-                        stripped_line,
-                        styles["body"],
-                    )
+                    Paragraph(line, styles["CustomBody"])
                 )
+                story.append(Spacer(1, 8))
 
-                story.append(
-                    Spacer(1, 8)
-                )
-
-            # =============================================
+            # =====================================================
             # BUILD PDF
-            # =============================================
+            # =====================================================
+            document.build(story)
 
-            document.build(
-                story
-            )
-
+            # =====================================================
+            # LOG SUCCESS
+            # =====================================================
             logger.info(
                 "PDF report generated successfully",
-                extra={
-                    "file_path": str(
-                        file_path
-                    ),
-                },
+                extra={"file_path": str(file_path)},
             )
 
-            return str(file_path)
-
-        except Exception:
-
-            logger.exception(
-                "Failed to generate PDF report"
+            return (
+                f"http://127.0.0.1:8001/generated-reports/"
+                f"{file_path.name}"
             )
 
-            raise
+        except Exception as e:
+
+            # =====================================================
+            # LOG FULL TRACE (CRITICAL FOR DEBUGGING)
+            # =====================================================
+            logger.exception("Failed to generate PDF report")
+
+            # DO NOT expose internal errors in production
+            raise HTTPException(
+                status_code=500,
+                detail="PDF generation failed. Check server logs."
+            )
 
     # =====================================================
     # STYLE SYSTEM
     # =====================================================
 
     @classmethod
-    def _build_styles(
-        cls,
-    ):
+    def _build_styles(cls):
 
-        styles = (
-            getSampleStyleSheet()
-        )
+        # ✅ fully isolated stylesheet
+        styles = StyleSheet1()
 
-        styles.add(
+        # Title
+        styles.add(ParagraphStyle(
+            name="CustomTitle",
+            fontSize=20,
+            leading=24,
+            alignment=TA_CENTER,
+            textColor=colors.HexColor("#1F2937"),
+            spaceAfter=20,
+        ))
 
-            ParagraphStyle(
-                name="title",
+        # Heading
+        styles.add(ParagraphStyle(
+            name="CustomHeading",
+            fontSize=14,
+            leading=18,
+            alignment=TA_LEFT,
+            textColor=colors.HexColor("#111827"),
+            spaceBefore=10,
+            spaceAfter=10,
+        ))
 
-                parent=styles["Heading1"],
-
-                fontSize=20,
-
-                leading=24,
-
-                alignment=TA_CENTER,
-
-                textColor=colors.HexColor(
-                    "#1F2937"
-                ),
-
-                spaceAfter=20,
-            )
-        )
-
-        styles.add(
-
-            ParagraphStyle(
-                name="heading",
-
-                parent=styles["Heading2"],
-
-                fontSize=14,
-
-                leading=18,
-
-                alignment=TA_LEFT,
-
-                textColor=colors.HexColor(
-                    "#111827"
-                ),
-
-                spaceBefore=10,
-
-                spaceAfter=10,
-            )
-        )
-
-        styles.add(
-
-            ParagraphStyle(
-                name="body",
-
-                parent=styles["BodyText"],
-
-                fontSize=11,
-
-                leading=18,
-
-                alignment=TA_LEFT,
-
-                textColor=colors.black,
-            )
-        )
+        # Body
+        styles.add(ParagraphStyle(
+            name="CustomBody",
+            fontSize=11,
+            leading=18,
+            alignment=TA_LEFT,
+            textColor=colors.black,
+        ))
 
         return styles
 

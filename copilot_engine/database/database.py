@@ -24,11 +24,11 @@ from sqlalchemy import (
     text,
 )
 
-from core.config import (
+from copilot_engine.core.config import (
     settings,
 )
 
-from core.exception import (
+from copilot_engine.core.exception import (
     DatabaseConnectionError,
 )
 

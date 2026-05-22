@@ -13,11 +13,11 @@ from typing import (
     Union,
 )
 
-from observability.observability_service import (
+from copilot_engine.observability.observability_service import (
     ObservabilityService,
 )
 
-from core.exception import (
+from copilot_engine.core.exception import (
     ResponseParsingError,
 )
 

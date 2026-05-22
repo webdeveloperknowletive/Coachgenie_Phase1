@@ -6,7 +6,7 @@ import logging
 from uuid import UUID
 from typing import List
 
-from schemas.student_schema import (
+from copilot_engine.schemas.student_schema import (
     StudentPerformanceReport,
     WeakSubjectAnalysis,
     StudentRiskAssessment,
@@ -18,14 +18,14 @@ from schemas.student_schema import (
     AIStudentInsights,
 )
 
-from schemas.request_context import RequestContext
+from copilot_engine.schemas.request_context import RequestContext
 
-from tools.student.performance_tool import PerformanceTool
-from tools.student.attendance_tools import AttendanceTool
-from tools.student.risk_tool import RiskTool
-from tools.student.summary_tool import SummaryTool
+from copilot_engine.tools.student.performance_tool import PerformanceTool
+from copilot_engine.tools.student.attendance_tools import AttendanceTool
+from copilot_engine.tools.student.risk_tool import RiskTool
+from copilot_engine.tools.student.summary_tool import SummaryTool
 
-from prompts.student.student_prompts import (
+from copilot_engine.prompts.student.student_prompts import (
     build_performance_analysis_prompt,
     build_parent_report_prompt,
     build_weak_subject_prompt,
@@ -34,17 +34,17 @@ from prompts.student.student_prompts import (
     build_student_summary_prompt,
 )
 
-from guardrails.output_validator import validate_llm_response
+from copilot_engine.guardrails.output_validator import validate_llm_response
 
-from observability.decorators import track_agent_execution
+from copilot_engine.observability.decorators import track_agent_execution
 
-from exceptions.student_exceptions import (
+from copilot_engine.exceptions.student_exceptions import (
     StudentAgentError,
     StudentDataFetchError,
     StudentAnalysisError,
 )
 
-from repositories.report_repository import (
+from copilot_engine.repositories.report_repository import (
     ReportRepository,
 )
 

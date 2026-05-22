@@ -11,11 +11,11 @@ from fastapi.responses import (
     FileResponse,
 )
 
-from reports.schemas.report_schema import (
+from copilot_engine.reports.schemas.report_schema import (
     ReportSchema,
 )
 
-from reports.services.report_service import (
+from copilot_engine.reports.services.report_service import (
     ReportService,
 )
 
@@ -31,10 +31,7 @@ router = APIRouter(
 # GENERATE PDF REPORT
 # =========================================================
 
-@router.post(
-    "/generate-pdf",
-    response_class=FileResponse,
-)
+@router.post("/generate-pdf")
 async def generate_pdf_report(
     report: ReportSchema,
 ):
@@ -101,15 +98,10 @@ async def generate_pdf_report(
         # DOWNLOAD RESPONSE
         # =============================================
 
-        return FileResponse(
-            path=str(file_path),
-
-            media_type=(
-                "application/pdf"
-            ),
-
-            filename=file_path.name,
-        )
+        return {
+            "success": True,
+            "report_url": pdf_file_path,
+        }
 
     except HTTPException:
 

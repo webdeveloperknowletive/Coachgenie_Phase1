@@ -21,11 +21,11 @@ from sqlalchemy.exc import (
     SQLAlchemyError,
 )
 
-from schemas.models.ai_generated_reports import (
+from copilot_engine.schemas.models.ai_generated_reports import (
     AIGeneratedReport,
 )
 
-from core.exception import (
+from copilot_engine.core.exception import (
     DatabaseOperationError,
 )
 

@@ -17,6 +17,10 @@ from pydantic import BaseModel
 # =========================================================
 
 class LLMResponse(BaseModel):
+    
+    model_config = {
+        "protected_namespaces": ()
+    }
 
     content: str
 

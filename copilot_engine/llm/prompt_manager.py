@@ -11,7 +11,7 @@ from typing import (
     Optional,
 )
 
-from core.exception import (
+from copilot_engine.core.exception import (
     PromptTemplateNotFoundError,
     PromptRenderingError,
 )

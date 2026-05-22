@@ -3,15 +3,15 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from reports.schemas.report_schema import (
+from copilot_engine.reports.schemas.report_schema import (
     ReportSchema,
 )
 
-from reports.formatters.response_formatter import (
+from copilot_engine.reports.formatters.response_formatter import (
     ResponseFormatter,
 )
 
-from reports.generators.pdf_generator import (
+from copilot_engine.reports.generators.pdf_generator import (
     PDFGenerator,
 )
 

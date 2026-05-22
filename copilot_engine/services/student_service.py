@@ -13,9 +13,9 @@ from fastapi import (
     status,
 )
 
-from schemas.request_context import RequestContext
+from copilot_engine.schemas.request_context import RequestContext
 
-from schemas.student_schema import (
+from copilot_engine.schemas.student_schema import (
     StudentPerformanceReport,
     WeakSubjectAnalysis,
     StudentRiskAssessment,
@@ -25,17 +25,17 @@ from schemas.student_schema import (
     StudentSummaryReport,
 )
 
-from agents.student_agent import StudentAgent
+from copilot_engine.agents.student_agent import StudentAgent
 
-from dependencies.student_dependencies import (
+from copilot_engine.dependencies.student_dependencies import (
     get_student_agent,
 )
 
-from dependencies.auth_dependencies import (
+from copilot_engine.dependencies.auth_dependencies import (
     get_request_context,
 )
 
-from exceptions.student_exceptions import (
+from copilot_engine.exceptions.student_exceptions import (
     StudentAgentError,
     StudentAnalysisError,
     StudentDataFetchError,

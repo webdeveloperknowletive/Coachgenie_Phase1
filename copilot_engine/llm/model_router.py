@@ -12,28 +12,28 @@ from typing import (
 
 from pydantic import BaseModel
 
-from llm.providers.base_provider import (
+from copilot_engine.llm.providers.base_provider import (
     LLMMessage,
     LLMResponse,
 )
 
-from llm.providers.groq_client import (
+from copilot_engine.llm.providers.groq_client import (
     GroqProvider,
 )
 
-from llm.parsers.response_parser import (
+from copilot_engine.llm.parsers.response_parser import (
     ResponseParser,
 )
 
-from guardrails.input_validator import (
+from copilot_engine.guardrails.input_validator import (
     InputValidator,
 )
 
-from guardrails.output_validator import (
+from copilot_engine.guardrails.output_validator import (
     OutputValidator,
 )
 
-from observability.observability_service import (
+from copilot_engine.observability.observability_service import (
     ObservabilityService,
 )
 

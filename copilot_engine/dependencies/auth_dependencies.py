@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from fastapi import Request
 
-from schemas.request_context import RequestContext
+from copilot_engine.schemas.request_context import RequestContext
 
 
 async def get_request_context(

@@ -7,7 +7,7 @@ from starlette.middleware.base import (
 )
 from starlette.responses import Response
 
-from core.logging_config import (
+from copilot_engine.core.logging_config import (
     request_id_context,
     trace_id_context,
     user_id_context,

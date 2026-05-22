@@ -4,6 +4,13 @@ from sqlalchemy import select, and_
 from app.models.ai import AISession, AIMessage
 from app.utils.exceptions import NotFoundError, BadRequestError
 from app.config import settings
+import httpx
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, and_
+
+COPILOT_URL = (
+    "http://localhost:8001"
+)
 
 # System prompts for each AI feature
 SYSTEM_PROMPTS = {
@@ -83,100 +90,50 @@ async def chat(
     if session.ended_at:
         raise BadRequestError("This session has already ended.")
 
-    # Check if OpenAI is configured
-    if not settings.OPENAI_API_KEY or settings.OPENAI_API_KEY == "sk-fill-this-later":
-        # Return mock response if OpenAI not configured
-        mock_reply = f"[AI Demo Mode] You asked: '{user_message}'. To enable real AI responses, add your OpenAI API key to the .env file."
+    # Save user message
+    user_msg = AIMessage(
+        session_id=session_id,
+        tenant_id=tenant_id,
+        role="user",
+        content=user_message,
+    )
+    db.add(user_msg)
+    await db.flush()
 
-        # Save user message
-        user_msg = AIMessage(
-            session_id=session_id,
-            tenant_id=tenant_id,
-            role="user",
-            content=user_message,
+    # Forward to GROQ/Copilot agent
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{COPILOT_URL}/sessions/{session_id}/chat",
+            json={
+                "session_id": session_id,
+                "tenant_id": tenant_id,
+                "user_id": str(session.user_id),
+                "message": user_message,
+            },
+            timeout=120,
         )
-        db.add(user_msg)
+        response.raise_for_status()
+        data = response.json()
 
-        # Save assistant reply
-        assistant_msg = AIMessage(
-            session_id=session_id,
-            tenant_id=tenant_id,
-            role="assistant",
-            content=mock_reply,
-            tokens=0,
-        )
-        db.add(assistant_msg)
-        await db.flush()
+    reply = data.get("response", "[Copilot] No reply received.")
+    tokens_used = 0  # GROQ agent doesn’t return token usage
 
-        return {
-            "reply": mock_reply,
-            "tokens_used": 0,
-            "session_id": session_id,
-        }
+    # Save assistant reply
+    assistant_msg = AIMessage(
+        session_id=session_id,
+        tenant_id=tenant_id,
+        role="assistant",
+        content=reply,
+        tokens=tokens_used,
+    )
+    db.add(assistant_msg)
+    await db.flush()
 
-    # Real OpenAI call
-    try:
-        from openai import AsyncOpenAI
-        client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-
-        # Save user message
-        user_msg = AIMessage(
-            session_id=session_id,
-            tenant_id=tenant_id,
-            role="user",
-            content=user_message,
-        )
-        db.add(user_msg)
-        await db.flush()
-
-        # Load conversation history (last 20 messages)
-        history_result = await db.execute(
-            select(AIMessage)
-            .where(AIMessage.session_id == session_id)
-            .order_by(AIMessage.created_at.asc())
-            .limit(20)
-        )
-        history = history_result.scalars().all()
-
-        # Build messages for OpenAI
-        system_prompt = SYSTEM_PROMPTS.get(session.feature, SYSTEM_PROMPTS["doubt_solver"])
-        messages = [{"role": "system", "content": system_prompt}]
-        for msg in history:
-            messages.append({"role": msg.role, "content": msg.content})
-
-        # Call OpenAI
-        completion = await client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            max_tokens=1000,
-            temperature=0.7,
-        )
-
-        reply = completion.choices[0].message.content or ""
-        tokens_used = completion.usage.total_tokens if completion.usage else 0
-
-        # Save assistant reply
-        assistant_msg = AIMessage(
-            session_id=session_id,
-            tenant_id=tenant_id,
-            role="assistant",
-            content=reply,
-            tokens=tokens_used,
-        )
-        db.add(assistant_msg)
-
-        # Update session token count
-        session.total_tokens = (session.total_tokens or 0) + tokens_used
-        await db.flush()
-
-        return {
-            "reply": reply,
-            "tokens_used": tokens_used,
-            "session_id": session_id,
-        }
-
-    except Exception as e:
-        raise BadRequestError(f"AI service error: {str(e)}")
+    return {
+        "reply": reply,
+        "tokens_used": tokens_used,
+        "session_id": session_id,
+    }
 
 
 async def end_session(db: AsyncSession, tenant_id: str, session_id: str):
