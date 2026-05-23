@@ -2,6 +2,8 @@ import logging
 
 from pathlib import Path
 
+from pydantic import BaseModel
+
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -26,7 +28,16 @@ router = APIRouter(
     tags=["Reports"],
 )
 
+class StudentReportRequest(BaseModel):
+    student_data: dict
 
+
+class AttendanceReportRequest(BaseModel):
+    attendance_data: dict
+
+
+class BatchReportRequest(BaseModel):
+    batch_data: dict
 # =========================================================
 # GENERATE PDF REPORT
 # =========================================================
@@ -120,3 +131,45 @@ async def generate_pdf_report(
                 "PDF report."
             ),
         )
+        
+@router.post("/student-performance")
+async def generate_student_performance_report(
+    payload: StudentReportRequest,
+):
+
+    pdf_path = await ReportService.generate_student_report(
+        student_data=payload.student_data,
+    )
+
+    return {
+        "success": True,
+        "pdf_url": pdf_path,
+    }
+    
+@router.post("/attendance-report")
+async def generate_attendance_report(
+    payload: AttendanceReportRequest,
+):
+
+    pdf_path = await ReportService.generate_attendance_report(
+        attendance_data=payload.attendance_data,
+    )
+
+    return {
+        "success": True,
+        "pdf_url": pdf_path,
+    }
+    
+@router.post("/batch-performance")
+async def generate_batch_performance_report(
+    payload: BatchReportRequest,
+):
+
+    pdf_path = await ReportService.generate_batch_report(
+        batch_data=payload.batch_data,
+    )
+
+    return {
+        "success": True,
+        "pdf_url": pdf_path,
+    }

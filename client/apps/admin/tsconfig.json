@@ -51,6 +51,7 @@
     "jsx": "preserve",
     "incremental": true,
     "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
 
     // ✅ ADD THESE TWO LINES
     "baseUrl": ".",

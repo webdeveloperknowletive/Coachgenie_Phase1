@@ -3,3 +3,4 @@ backend.zip/
 client.zip/
 *__pycache__/
 *.env.local
+ai-coach-3/

@@ -15,6 +15,18 @@ from copilot_engine.reports.generators.pdf_generator import (
     PDFGenerator,
 )
 
+from copilot_engine.reports.builders.student_performance_builder import (
+    StudentPerformanceReportBuilder,
+)
+
+from copilot_engine.reports.builders.attendance_report_builder import (
+    AttendanceReportBuilder,
+)
+
+from copilot_engine.reports.builders.batch_performance_builder import (
+    BatchPerformanceReportBuilder,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -158,4 +170,51 @@ class ReportService:
         raise NotImplementedError(
             "Markdown report generation "
             "not implemented yet."
+        )
+        
+    @staticmethod
+    async def generate_student_report(
+        student_data: dict,
+    ):
+
+        builder = StudentPerformanceReportBuilder()
+
+        report = await builder.build(
+            student_data=student_data,
+        )
+
+        return ReportService.generate_pdf_report(
+            report=report,
+        )
+
+
+    @staticmethod
+    async def generate_attendance_report(
+        attendance_data: dict,
+    ):
+
+        builder = AttendanceReportBuilder()
+
+        report = await builder.build(
+            attendance_data=attendance_data,
+        )
+
+        return ReportService.generate_pdf_report(
+            report=report,
+        )
+
+
+    @staticmethod
+    async def generate_batch_report(
+        batch_data: dict,
+    ):
+
+        builder = BatchPerformanceReportBuilder()
+
+        report = await builder.build(
+            batch_data=batch_data,
+        )
+
+        return ReportService.generate_pdf_report(
+            report=report,
         )

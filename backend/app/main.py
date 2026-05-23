@@ -91,6 +91,10 @@ from app.routers import (
     auth, tenants, leads, students, admissions,
     batches, attendance, exams, fees, notifications, ai
 )
+
+from app.routers.ai_reports import (
+    router as ai_reports_router,
+)
 from app.routers import growth_cards
 from app.routers import auth_extended, dashboard
 
@@ -150,3 +154,4 @@ app.include_router(ai.router,            prefix=PREFIX)
 app.include_router(growth_cards.router,  prefix=PREFIX)
 app.include_router(auth_extended.router, prefix=PREFIX)
 app.include_router(dashboard.router,     prefix=PREFIX)
+app.include_router(ai_reports_router,    prefix=PREFIX)
