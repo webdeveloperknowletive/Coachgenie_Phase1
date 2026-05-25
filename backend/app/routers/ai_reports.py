@@ -5,7 +5,7 @@ from fastapi import (
     HTTPException,
 )
 
-from services.ai_report import (
+from app.services.ai_report import (
     AIReportService,
 )
 

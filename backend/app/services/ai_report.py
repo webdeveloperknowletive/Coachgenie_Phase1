@@ -4,28 +4,32 @@ from typing import Dict, Any
 
 from fastapi import HTTPException
 
-from services.copilot_client import (
+from app.services.copilot_client import (
     CopilotClient,
 )
 
-from services.student import (
-    StudentService,
+from app.services.student import (
+    get_students,
+    get_student
 )
 
-from services.attendance import (
-    AttendanceService,
+from app.services.attendance import (
+    get_student_summary
 )
 
-from services.exam import (
-    ExamService,
+from app.services.exam import (
+    get_exams,
+    get_exam,
 )
 
-from services.batch import (
-    BatchService,
+from app.services.batch import (
+    get_batches,
+    get_batches_for_student
 )
 
-from services.fee import (
-    FeeService,
+from app.services.fee import (
+    get_all_invoices,
+    get_student_invoices,
 )
 
 logger = logging.getLogger(__name__)
@@ -67,7 +71,7 @@ class AIReportService:
             # =========================================
 
             student = (
-                await StudentService
+                await get_student
                 .get_student_by_id(
                     student_id
                 )
@@ -81,21 +85,21 @@ class AIReportService:
                 )
 
             attendance = (
-                await AttendanceService
+                await get_student_summary
                 .get_student_attendance(
                     student_id
                 )
             )
 
             exams = (
-                await ExamService
+                await get_exam
                 .get_student_exam_results(
                     student_id
                 )
             )
 
             fees = (
-                await FeeService
+                await get_student_invoices
                 .get_student_fee_summary(
                     student_id
                 )
@@ -174,21 +178,21 @@ class AIReportService:
             # =========================================
 
             student = (
-                await StudentService
+                await get_student
                 .get_student_by_id(
                     student_id
                 )
             )
 
             attendance = (
-                await AttendanceService
+                await get_student_summary
                 .get_student_attendance(
                     student_id
                 )
             )
 
             exams = (
-                await ExamService
+                await get_exam
                 .get_student_exam_results(
                     student_id
                 )
@@ -258,7 +262,7 @@ class AIReportService:
             # =========================================
 
             batch = (
-                await BatchService
+                await get_batches
                 .get_batch_by_id(
                     batch_id
                 )
@@ -272,21 +276,21 @@ class AIReportService:
                 )
 
             students = (
-                await BatchService
+                await get_batches_for_student
                 .get_batch_students(
                     batch_id
                 )
             )
 
             exams = (
-                await ExamService
+                await get_exam
                 .get_batch_exam_results(
                     batch_id
                 )
             )
 
             attendance = (
-                await AttendanceService
+                await get_student_summary
                 .get_batch_attendance(
                     batch_id
                 )
