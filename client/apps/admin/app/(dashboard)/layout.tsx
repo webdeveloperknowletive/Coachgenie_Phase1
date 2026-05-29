@@ -17,7 +17,7 @@ const MODULE_ROLES: Record<string, UserRole[]> = {
   "/settings": ["owner"],
   "/fees": ["owner", "counselor"],
   "/growth-cards": ["owner", "counselor", "tutor"],
-  "/notifications": ["owner", "counselor"],
+  "/notifications": ["owner", "counselor", "admin"],
   "/ai": ["owner", "counselor", "tutor"],
 };
 
@@ -40,6 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [accessToken, router]);
 
   useEffect(() => {
+     console.log("CURRENT ROLE:", role, "PATHNAME:", pathname);
     const allowed = getAllowedRoles(pathname);
     if (accessToken && role && !allowed.includes(role)) {
       router.replace("/dashboard");

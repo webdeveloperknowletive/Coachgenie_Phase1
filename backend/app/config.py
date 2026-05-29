@@ -1,37 +1,46 @@
 # from pydantic_settings import BaseSettings
-# from typing import List
+# from typing import List, Optional
+# from pydantic import field_validator
 
 
 # class Settings(BaseSettings):
 #     APP_NAME: str = "CoachingERP"
 #     DEBUG: bool = True
-#     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
+#     ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
 
-#     # DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5433/erp"
-#     DATABASE_URL: str = "postgresql+asyncpg://postgres:Aman@319@localhost:5433/erp"
+#     DATABASE_URL: str = "postgresql+asyncpg://postgres:Aman%40319@localhost:5432/erp"
 
-#     SECRET_KEY: str = "change_this_to_64_random_chars"
+#     SECRET_KEY: str
 #     JWT_ALGORITHM: str = "HS256"
-#     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+#     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 #     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
 #     BCRYPT_ROUNDS: int = 12
 #     RATE_LIMIT_PER_MINUTE: int = 100
 
-#     OPENAI_API_KEY: str = ""
-#     SMTP_HOST: str = ""
+#     # ✅ SMTP settings
+#     SMTP_HOST: Optional[str] = None
 #     SMTP_PORT: int = 587
-#     SMTP_USER: str = ""
-#     SMTP_PASSWORD: str = ""
-#     SMTP_FROM: str = ""
+#     SMTP_USER: Optional[str] = None
+#     SMTP_PASSWORD: Optional[str] = None
+#     SMTP_FROM: Optional[str] = None
 
-#     WHATSAPP_API_URL: str = ""
-#     WHATSAPP_PHONE_NUMBER_ID: str = ""
-#     WHATSAPP_ACCESS_TOKEN: str = ""
-
+#     # grokq api key
+#     GROQ_API_KEY: Optional[str] = None 
 #     @property
 #     def origins_list(self) -> List[str]:
-#         return [o.strip() for o in self.ALLOWED_ORIGINS.split(",")]
+#         return [
+#             o.strip().replace('"', '').replace("'", "")
+#             for o in self.ALLOWED_ORIGINS.split(",")
+#             if o.strip()
+#         ]
+
+#     @field_validator("SECRET_KEY")
+#     @classmethod
+#     def secret_key_must_be_strong(cls, v: str) -> str:
+#         if len(v) < 32 or v == "change_this_to_64_random_chars":
+#             raise ValueError("SECRET_KEY must be at least 32 chars and not the default placeholder")
+#         return v
 
 #     class Config:
 #         env_file = ".env"
@@ -42,7 +51,7 @@
 
 
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 from pydantic import field_validator
 
 
@@ -61,6 +70,26 @@ class Settings(BaseSettings):
     BCRYPT_ROUNDS: int = 12
     RATE_LIMIT_PER_MINUTE: int = 100
 
+    # SMTP settings
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM: Optional[str] = None
+
+    # Groq API
+    GROQ_API_KEY: Optional[str] = None
+
+    # WhatsApp (Meta Cloud API)
+    WHATSAPP_ACCESS_TOKEN: Optional[str] = None
+    WHATSAPP_PHONE_NUMBER_ID: Optional[str] = None
+    WHATSAPP_API_VERSION: str = "v19.0"
+
+    # SMS (Twilio) — add if you're using SMS too
+    TWILIO_ACCOUNT_SID: Optional[str] = None
+    TWILIO_AUTH_TOKEN: Optional[str] = None
+    TWILIO_PHONE_NUMBER: Optional[str] = None
+
     @property
     def origins_list(self) -> List[str]:
         return [
@@ -68,7 +97,7 @@ class Settings(BaseSettings):
             for o in self.ALLOWED_ORIGINS.split(",")
             if o.strip()
         ]
-        
+
     @field_validator("SECRET_KEY")
     @classmethod
     def secret_key_must_be_strong(cls, v: str) -> str:

@@ -3,8 +3,19 @@ from app.dependencies import get_tenant, require_roles, DB
 from app.schemas.attendance import TakeAttendanceRequest
 from app.services import attendance as att_service
 
+
 router = APIRouter(prefix="/attendance", tags=["Attendance"])
 
+
+@router.get("/heatmap")
+async def attendance_heatmap(
+    db: DB,
+    tenant=Depends(get_tenant),
+    current_user=Depends(require_roles("owner", "tutor", "counselor")),
+):
+    from app.services.attendance import get_heatmap
+    data = await get_heatmap(db, str(tenant.id))
+    return {"success": True, "data": data}
 
 @router.get("/")
 async def get_attendance_by_batch(

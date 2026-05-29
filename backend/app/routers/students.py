@@ -3,7 +3,14 @@ from app.dependencies import get_tenant, require_roles, DB
 from app.schemas.student import StudentCreate, StudentUpdate, StudentOut
 from app.services import student as student_service
 
+from app.models.user import User
+from sqlalchemy import select
+
 router = APIRouter(prefix="/students", tags=["Students"])
+router = APIRouter(prefix="/parents", tags=["Parents"])
+
+
+
 
 @router.get("/")
 async def list_students(

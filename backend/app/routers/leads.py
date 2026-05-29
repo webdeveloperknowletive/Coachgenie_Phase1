@@ -10,6 +10,16 @@ from app.services import admission as admission_service
 router = APIRouter(prefix="/leads", tags=["Leads"])
 
 
+@router.get("/funnel")
+async def lead_funnel(
+    db: DB,
+    tenant=Depends(get_tenant),
+    current_user=Depends(require_roles("owner", "counselor")),
+):
+    from app.services.lead import get_funnel
+    data = await get_funnel(db, str(tenant.id))
+    return {"success": True, "data": data}
+
 # ── List / CRUD ────────────────────────────────────────────────────────────────
 @router.get("/")
 async def list_leads(

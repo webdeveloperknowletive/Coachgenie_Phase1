@@ -2,7 +2,7 @@ from datetime import date, datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, func
 from app.models.batch import Batch, BatchStudent, Class, Subject
-from app.models.syllabus import SyllabusTopic, SyllabusProgress
+from app.models.syllabus import SyllabusItem, SyllabusProgress
 from app.utils.exceptions import NotFoundError, ConflictError
 from app.utils.pagination import paginate
 import uuid
@@ -219,23 +219,23 @@ async def update_class(db: AsyncSession, tenant_id: str,
 
 async def get_syllabus_topics(db: AsyncSession, subject_id: str) -> list:
     result = await db.execute(
-        select(SyllabusTopic)
-        .where(SyllabusTopic.subject_id == subject_id)
-        .order_by(SyllabusTopic.sort_order.asc(), SyllabusTopic.created_at.asc())
+        select(SyllabusItem)
+        .where(SyllabusItem.subject_id == subject_id)
+        .order_by(SyllabusItem.sort_order.asc(), SyllabusItem.created_at.asc())
     )
     return result.scalars().all()
 
 
-async def create_syllabus_topic(db: AsyncSession, tenant_id: str, data: dict) -> SyllabusTopic:
-    topic = SyllabusTopic(tenant_id=tenant_id, **data)
+async def create_syllabus_topic(db: AsyncSession, tenant_id: str, data: dict) -> SyllabusItem:
+    topic = SyllabusItem(tenant_id=tenant_id, **data)
     db.add(topic)
     await db.flush()
     return topic
 
 
-async def update_syllabus_topic(db: AsyncSession, topic_id: str, data: dict) -> SyllabusTopic:
+async def update_syllabus_topic(db: AsyncSession, topic_id: str, data: dict) -> SyllabusItem:
     result = await db.execute(
-        select(SyllabusTopic).where(SyllabusTopic.id == topic_id)
+        select(SyllabusItem).where(SyllabusItem.id == topic_id)
     )
     topic = result.scalar_one_or_none()
     if not topic:
@@ -249,7 +249,7 @@ async def update_syllabus_topic(db: AsyncSession, topic_id: str, data: dict) -> 
 
 async def delete_syllabus_topic(db: AsyncSession, topic_id: str):
     result = await db.execute(
-        select(SyllabusTopic).where(SyllabusTopic.id == topic_id)
+        select(SyllabusItem).where(SyllabusItem.id == topic_id)
     )
     topic = result.scalar_one_or_none()
     if not topic:
@@ -269,9 +269,9 @@ async def get_syllabus_with_progress(
     """
     # Get all topics for subject
     topics_result = await db.execute(
-        select(SyllabusTopic)
-        .where(SyllabusTopic.subject_id == subject_id)
-        .order_by(SyllabusTopic.sort_order.asc())
+        select(SyllabusItem)
+        .where(SyllabusItem.subject_id == subject_id)
+        .order_by(SyllabusItem.sort_order.asc())
     )
     topics = topics_result.scalars().all()
 

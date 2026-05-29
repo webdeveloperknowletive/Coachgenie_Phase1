@@ -7,7 +7,7 @@ from app.models.batch import Subject, Batch, BatchStudent, Class
 from app.models.attendance import AttendanceSession, AttendanceRecord
 from app.models.exam import Exam, ExamResult
 from app.models.fee import FeeStructure, FeeInvoice, FeePayment
-from app.models.syllabus import SyllabusTopic, SyllabusProgress
+from app.models.syllabus import SyllabusItem, SyllabusProgress
 from app.models.growth_card import GrowthCard
 from app.models.notification import NotificationTemplate, NotificationLog
 from app.models.ai import AISession, AIMessage, DashboardSnapshot

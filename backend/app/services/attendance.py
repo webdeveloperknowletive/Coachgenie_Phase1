@@ -1,9 +1,30 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+# from sqlalchemy import select, and_
+from sqlalchemy import select, func, and_
 from app.models.attendance import AttendanceSession, AttendanceRecord
 from app.utils.exceptions import ConflictError
 from datetime import date
 from app.models.batch import Class
+
+async def get_heatmap(db: AsyncSession, tenant_id: str) -> dict:
+    from app.models.attendance import AttendanceRecord
+    from datetime import date, timedelta
+    since = date.today() - timedelta(days=180)
+    result = await db.execute(
+        select(
+            func.date(AttendanceRecord.created_at).label("day"),
+            func.count(AttendanceRecord.id).label("sessions"),
+        )
+        .where(
+            and_(
+                AttendanceRecord.tenant_id == tenant_id,
+                AttendanceRecord.status == "present",
+                func.date(AttendanceRecord.created_at) >= since,
+            )
+        )
+        .group_by("day")
+    )
+    return {str(r.day): min(r.sessions, 4) for r in result.all()}
 
 async def get_attendance_by_batch(
     db: AsyncSession,

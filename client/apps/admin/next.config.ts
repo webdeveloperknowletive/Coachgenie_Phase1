@@ -1,12 +1,5 @@
-// import type { NextConfig } from "next";
-
-// const nextConfig: NextConfig = {
-//   /* config options here */
-// };
-
-// export default nextConfig;
-
-module.exports = {
+﻿module.exports = {
+  reactStrictMode: false,
   transpilePackages: [
     "@coachgenie/api-client",
     "@coachgenie/ui",

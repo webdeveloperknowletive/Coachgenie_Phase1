@@ -6,6 +6,19 @@ from app.services import growth_card as gc_service
 router = APIRouter(prefix="/growth-cards", tags=["Growth Cards"])
 
 
+@router.post("/generate/{student_id}", status_code=201)
+async def generate_growth_card(
+    student_id: str,
+    db: DB,
+    tenant=Depends(get_tenant),
+    current_user=Depends(require_roles("owner", "tutor")),
+):
+    card = await gc_service.auto_generate_growth_card(
+        db, str(tenant.id), str(current_user.id), student_id
+    )
+    await db.commit()
+    return {"success": True, "data": GrowthCardOut.model_validate(card)}
+
 @router.get("/")
 async def list_growth_cards(
     db: DB,

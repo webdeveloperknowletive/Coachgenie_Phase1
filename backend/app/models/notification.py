@@ -3,7 +3,7 @@ from sqlalchemy import String, Boolean, Text, ForeignKey, UniqueConstraint, Inde
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP, JSONB
 from app.database import Base
-
+from sqlalchemy import String, Boolean, Text, ForeignKey, UniqueConstraint, Index, text
 
 class NotificationTemplate(Base):
     __tablename__ = "notification_templates"
@@ -19,7 +19,7 @@ class NotificationTemplate(Base):
     body: Mapped[str] = mapped_column(Text, nullable=False)
     variables = mapped_column(JSONB, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-
+    created_at = mapped_column(TIMESTAMP(timezone=True), server_default=text("NOW()"))
     tenant = relationship("Tenant", back_populates="notification_templates")
     logs = relationship("NotificationLog", back_populates="template")
 
@@ -45,5 +45,5 @@ class NotificationLog(Base):
     sent_at = mapped_column(TIMESTAMP(timezone=True), nullable=True)
     delivered_at = mapped_column(TIMESTAMP(timezone=True), nullable=True)
     read_at = mapped_column(TIMESTAMP(timezone=True), nullable=True)
-
+    created_at = mapped_column(TIMESTAMP(timezone=True), server_default=text("NOW()"))
     template = relationship("NotificationTemplate", back_populates="logs")

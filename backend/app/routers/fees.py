@@ -5,6 +5,15 @@ from app.services import fee as fee_service
 
 router = APIRouter(prefix="/fees", tags=["Fees"])
 
+@router.get("/monthly-trend")
+async def monthly_trend(
+    db: DB,
+    tenant=Depends(get_tenant),
+    current_user=Depends(require_roles("owner")),
+):
+    data = await fee_service.get_monthly_collection(db, str(tenant.id))
+    return {"success": True, "data": data}
+
 @router.get("/structures")
 async def list_structures(
     db: DB,

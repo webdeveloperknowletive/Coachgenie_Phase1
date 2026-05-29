@@ -16,8 +16,52 @@ def generate_otp(length: int = 6) -> str:
     return ''.join(random.choices(string.digits, k=length))
 
 
+# async def _send_otp_email(email: str, otp: str, purpose: str):
+#     """Send OTP via email — skips if SMTP not configured."""
+#     if not settings.SMTP_HOST:
+#         print(f"[DEV MODE] OTP for {email}: {otp}")
+#         return
+
+#     try:
+#         import aiosmtplib
+#         from email.mime.text import MIMEText
+#         from email.mime.multipart import MIMEMultipart
+
+#         subject = "Password Reset OTP" if purpose == "password_reset" else "Email Verification OTP"
+#         body = f"""
+#         <h2>CoachingERP - {subject}</h2>
+#         <p>Your OTP is: <strong style="font-size:24px">{otp}</strong></p>
+#         <p>This OTP is valid for 10 minutes.</p>
+#         <p>If you did not request this, please ignore this email.</p>
+#         """
+
+#         message = MIMEMultipart("alternative")
+#         message["Subject"] = subject
+#         message["From"] = settings.SMTP_FROM
+#         message["To"] = email
+#         message.attach(MIMEText(body, "html"))
+
+#         await aiosmtplib.send(
+#             message,
+#             hostname=settings.SMTP_HOST,
+#             port=settings.SMTP_PORT,
+#             username=settings.SMTP_USER,
+#             password=settings.SMTP_PASSWORD,
+#             start_tls=True,
+#         )
+#     except Exception as e:
+#         print(f"Email send failed: {e}")
+
+import sys
 async def _send_otp_email(email: str, otp: str, purpose: str):
     """Send OTP via email — skips if SMTP not configured."""
+    
+    # Debug: print current settings
+    print(f"[EMAIL DEBUG] SMTP_HOST={settings.SMTP_HOST}")
+    print(f"[EMAIL DEBUG] SMTP_USER={settings.SMTP_USER}")
+    print(f"[EMAIL DEBUG] SMTP_FROM={settings.SMTP_FROM}")
+    print(f"[EMAIL DEBUG] Sending to={email}, OTP={otp}")
+    
     if not settings.SMTP_HOST:
         print(f"[DEV MODE] OTP for {email}: {otp}")
         return
@@ -32,7 +76,6 @@ async def _send_otp_email(email: str, otp: str, purpose: str):
         <h2>CoachingERP - {subject}</h2>
         <p>Your OTP is: <strong style="font-size:24px">{otp}</strong></p>
         <p>This OTP is valid for 10 minutes.</p>
-        <p>If you did not request this, please ignore this email.</p>
         """
 
         message = MIMEMultipart("alternative")
@@ -41,6 +84,7 @@ async def _send_otp_email(email: str, otp: str, purpose: str):
         message["To"] = email
         message.attach(MIMEText(body, "html"))
 
+        print(f"[EMAIL DEBUG] Attempting SMTP connection...")
         await aiosmtplib.send(
             message,
             hostname=settings.SMTP_HOST,
@@ -49,8 +93,11 @@ async def _send_otp_email(email: str, otp: str, purpose: str):
             password=settings.SMTP_PASSWORD,
             start_tls=True,
         )
+        print(f"[EMAIL DEBUG] Email sent successfully to {email}")
     except Exception as e:
-        print(f"Email send failed: {e}")
+        print(f"[EMAIL ERROR] {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 async def forgot_password(
@@ -85,6 +132,7 @@ async def forgot_password(
 
     # Generate new OTP
     otp = generate_otp()
+    print(f"[FORGOT PASSWORD] Generated OTP: {otp} for {email}")
     otp_record = OTPCode(
         tenant_id=tenant_id,
         email=email,

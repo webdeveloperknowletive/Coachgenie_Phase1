@@ -29,7 +29,7 @@ if not database_url:
 
 database_url = database_url.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
 
-config.set_main_option("sqlalchemy.url", database_url)  # ✅ use the swapped variable
+config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 
 # ... rest of your env.py (target_metadata, run_migrations_offline, etc.)
 
