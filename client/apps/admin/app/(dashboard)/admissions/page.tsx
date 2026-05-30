@@ -74,22 +74,13 @@ const BOARDS = [
 ];
 
 // ─── API helpers ───────────────────────────────────────────────────────────────
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
-function authHeaders(): Record<string, string> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  try {
-    const raw      = localStorage.getItem("coachgenie-auth");
-    const state    = raw ? JSON.parse(raw)?.state : null;
-    const token    = state?.accessToken;
-    const tenantId = state?.tenantId;
-    if (token)    headers["Authorization"] = `Bearer ${token}`;
-    if (tenantId) headers["X-Tenant-Id"]   = tenantId;
-  } catch {}
-  return headers;
+function authHeaders(): HeadersInit {
+  return { "Content-Type": "application/json" };
 }
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────
+
 function derivePaymentStatus(paid: number, total: number): PaymentStatus {
   if (!total || paid <= 0) return "PENDING";
   if (paid >= total) return "FULL";

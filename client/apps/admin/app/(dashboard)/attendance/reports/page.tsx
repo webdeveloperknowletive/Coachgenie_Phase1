@@ -9,7 +9,7 @@ import { AttendanceReport }                 from "@/components/attendance/Attend
 import { cn }                               from "@/lib/utils";
 import { authHeaders }                      from "@/lib/auth-headers";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
 type AttendanceRecordApi = {
   studentId: string;

@@ -49,7 +49,10 @@ function VerifyOtpForm() {
     }
 
     toast.success("OTP verified");
-    router.push(`/reset-password?email=${encodeURIComponent(data.email)}&otp=${encodeURIComponent(data.otp)}`);
+    // router.push(`/reset-password?email=${encodeURIComponent(data.email)}&otp=${encodeURIComponent(data.otp)}`);
+    sessionStorage.setItem("cgr_email", data.email);
+    sessionStorage.setItem("cgr_otp", data.otp);
+    router.push("/reset-password");
   }
 
   return (

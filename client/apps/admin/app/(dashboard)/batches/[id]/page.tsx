@@ -11,7 +11,7 @@
 // import { authHeaders } from "@/lib/auth-headers";
 
 // // ── API helpers ────────────────────────────────────────────────
-// const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+// const API = "/api/proxy"
 
 // function mapBatch(raw: any,existingSyllabus?: any[]): Batch {
 //   const status: BatchStatus = raw.is_active === false ? "COMPLETED" : "ACTIVE";
@@ -796,7 +796,7 @@ import { toast } from "sonner";
 import type { Batch, BatchStatus } from "@/lib/types/academic";
 import { authHeaders } from "@/lib/auth-headers";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
 function mapBatch(raw: any, existingSyllabus?: any[]): Batch {
   const status: BatchStatus = raw.is_active === false ? "COMPLETED" : "ACTIVE";

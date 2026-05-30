@@ -14,28 +14,16 @@ import { STAGE_CONFIG, STAGES } from "@/lib/constants/leads";
 type View = "table" | "kanban";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
-const API    = process.env.NEXT_PUBLIC_API_URL        ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 const TENANT = process.env.NEXT_PUBLIC_TENANT_SUBDOMAIN ?? "demo";
 
-// function authHeaders(): HeadersInit {
-//   const token = sessionStorage.getItem("access_token");
-//   return {
-//     "Content-Type":       "application/json",
-//     "X-Tenant-Subdomain": TENANT,
-//     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-//   };
-// }
+
+
+
 function authHeaders(): HeadersInit {
-  const raw      = localStorage.getItem("coachgenie-auth");
-  const state    = raw ? JSON.parse(raw)?.state : null;
-  const token    = state?.accessToken;
-  const tenantId = state?.tenantId;
-  return {
-    "Content-Type": "application/json",
-    ...(token    ? { Authorization: `Bearer ${token}` } : {}),
-    ...(tenantId ? { "X-Tenant-Id": tenantId }          : {}),
-  };
+  return { "Content-Type": "application/json" };
 }
+
 
 /** Map a raw API lead object → your frontend Lead shape */
 function mapLead(raw: any): Lead {

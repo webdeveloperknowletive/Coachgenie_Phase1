@@ -7,7 +7,7 @@ from app.models.user import User
 from sqlalchemy import select
 
 router = APIRouter(prefix="/students", tags=["Students"])
-router = APIRouter(prefix="/parents", tags=["Parents"])
+
 
 
 

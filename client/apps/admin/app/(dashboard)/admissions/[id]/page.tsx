@@ -109,25 +109,10 @@ function buildInstallmentSchedule(remaining: number, count: number, dates: strin
   }));
 }
 
-function authHeaders(): Record<string, string> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  try {
-    const raw      = localStorage.getItem("coachgenie-auth");
-    const state    = raw ? JSON.parse(raw)?.state : null;
-    const token    = state?.accessToken;
-    const tenantId = state?.tenantId;
-    if (token)    headers["Authorization"] = `Bearer ${token}`;
-    if (tenantId) headers["X-Tenant-Id"]   = tenantId;
-  } catch {}
-  return headers;
+function authHeaders(): HeadersInit {
+  return { "Content-Type": "application/json" };
 }
 
-// ─── Edit Payment Modal ───────────────────────────────────────────────────────
-interface EditPaymentModalProps {
-  payment: AdmissionPayment;
-  onClose: () => void;
-  onSave:  (p: AdmissionPayment) => void;
-}
 
 function EditPaymentModal({ payment, onClose, onSave }: EditPaymentModalProps) {
   const [totalFee,   setTotalFee]   = useState(String(payment.totalFee));

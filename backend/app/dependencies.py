@@ -127,6 +127,30 @@ async def get_tenant(
     return tenant
 
 
+# async def get_current_user(
+#     request: Request,
+#     db: AsyncSession = Depends(get_db),
+#     tenant: Tenant = Depends(get_tenant),
+# ) -> User:
+#     auth_header = request.headers.get("Authorization", "")
+#     if not auth_header.startswith("Bearer "):
+#         raise UnauthorizedError("No token provided.")
+
+#     token = auth_header.split(" ")[1]
+#     payload = decode_access_token(token)
+
+#     result = await db.execute(
+#         select(User).where(
+#             and_(
+#                 User.id == uuid.UUID(payload["sub"]),
+#                 User.tenant_id == tenant.id,
+#             )
+#         )
+#     )
+#     user = result.scalar_one_or_none()
+#     if not user or not user.is_active:
+#         raise UnauthorizedError("User not found or inactive.")
+#     return user
 async def get_current_user(
     request: Request,
     db: AsyncSession = Depends(get_db),
@@ -138,6 +162,9 @@ async def get_current_user(
 
     token = auth_header.split(" ")[1]
     payload = decode_access_token(token)
+
+    # ✅ handle both camelCase and snake_case
+    tenant_id = payload.get("tenant_id") or payload.get("tenantId")
 
     result = await db.execute(
         select(User).where(

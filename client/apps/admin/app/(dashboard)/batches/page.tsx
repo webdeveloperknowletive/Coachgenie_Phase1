@@ -8,35 +8,13 @@ import { useAcademicStore } from "@/lib/stores/academic.store";
 import type { Batch } from "@/lib/types/academic";
 
 // ── API helpers ────────────────────────────────────────────────
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
 // ✅ FIX 1: Use localStorage + coachgenie-auth (matches the rest of the project)
 function authHeaders(): HeadersInit {
-  const raw   = localStorage.getItem("coachgenie-auth");
-  const state = raw ? JSON.parse(raw)?.state : null;
-  const token    = state?.accessToken;
-  const tenantId = state?.tenantId;
-  return {
-    "Content-Type": "application/json",
-    ...(token    ? { Authorization: `Bearer ${token}` } : {}),
-    ...(tenantId ? { "X-Tenant-Id": tenantId }          : {}),
-  };
+  return { "Content-Type": "application/json" };
 }
 
-// ✅ FIX 2: Safely parse error body — handles non-JSON responses (HTML, plain text, empty)
-async function parseErrorDetail(res: Response): Promise<string> {
-  const text = await res.text().catch(() => "");
-  try {
-    const err = JSON.parse(text);
-    if (Array.isArray(err.detail)) {
-      return err.detail.map((e: any) => `${e.loc?.slice(-1)[0]}: ${e.msg}`).join(", ");
-    }
-    return err.detail ?? err.message ?? `Server error: ${res.status}`;
-  } catch {
-    // Body was HTML or plain text — just surface the status
-    return text.slice(0, 200) || `Server error: ${res.status}`;
-  }
-}
 
 /** Map raw API BatchOut → frontend Batch shape */
 function mapBatch(raw: any): Batch {

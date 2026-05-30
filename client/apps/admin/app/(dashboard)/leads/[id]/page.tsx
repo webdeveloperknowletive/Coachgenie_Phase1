@@ -13,7 +13,7 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import type { ActivityType, LeadStage } from "@/lib/types/lead";
 
 // Add this line after the imports, before the component
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -52,68 +52,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     }
   }
 
-  function authHeaders(): Record<string, string> {
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    try {
-      const raw      = localStorage.getItem("coachgenie-auth");
-      const state    = raw ? JSON.parse(raw)?.state : null;
-      const token    = state?.accessToken;
-      const tenantId = state?.tenantId;
-      if (token)    headers["Authorization"] = `Bearer ${token}`;
-      if (tenantId) headers["X-Tenant-Id"]   = tenantId;
-    } catch {}
-    return headers;
-  }
+  function authHeaders(): HeadersInit {
+  return { "Content-Type": "application/json" };
+}
 
-  async function handleConvert() {
-    console.log("handleConvert called, lead id:", lead.id);
-    try {
-      console.log("making admission POST request");
-      const res = await fetch("/api/admissions", {
-        method:  "POST",
-        headers: authHeaders(),
-        // body: JSON.stringify({
-        //   lead_id:      lead.id,
-        //   student_name: lead.name,
-        //   grade:        lead.grade,
-        //   subjects:     lead.subject ? [lead.subject] : [],
-        //   status:       "PENDING_DOCS",
-        //   documents: [
-        //     { name: "Aadhar Card",        required: true, submitted: false },
-        //     { name: "Previous Marksheet", required: true, submitted: false },
-        //     { name: "Passport Photo",     required: true, submitted: false },
-        //   ],
-        // }),
-        body: JSON.stringify({
-        lead_id:      lead.id,
-        student_name: lead.name,
-        grade:        lead.grade,
-        board_name:   lead.boardName   || undefined,
-        batch_id:     lead.batchId     || undefined,
-        batch_name:   lead.batchName   || undefined,
-        phone:        lead.phone       || undefined,
-        email:        lead.email       || undefined,
-        parent_name:  lead.parentName  || undefined,
-        parent_phone: lead.parentContactNumber || undefined,
-        school_name:  lead.schoolName  || undefined,
-        subjects:     lead.subjects?.length ? lead.subjects : lead.subject ? [lead.subject] : [],
-        status:       "CONFIRMED",
-        documents: [
-          { name: "Aadhar Card",        required: true,  submitted: false },
-          { name: "Previous Marksheet", required: true,  submitted: false },
-          { name: "Passport Photo",     required: true,  submitted: false },
-        ],
-      }),
-      });
-    //   const result = await res.json();
-    //   if (!res.ok) throw new Error(result?.detail ?? "Failed to create admission");
-    //   await fetch(`${API}/leads/${lead.id}`, {
-    //   method:  "PATCH",
-    //   headers: authHeaders(),
-    //   body:    JSON.stringify({ status: "enrolled" }),
-    // });
-    const result = await res.json();
-if (!res.ok) throw new Error(result?.detail ?? "Failed to create admission");
 
 const patchRes = await fetch(`${API}/leads/${lead.id}`, {
   method:  "PATCH",

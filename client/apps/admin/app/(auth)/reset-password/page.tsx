@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2, LockKeyhole } from "lucide-react";
-
+import { useEffect } from "react";
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
   otp: z.string().min(4, "Enter the OTP"),
@@ -24,20 +24,67 @@ type ResetPasswordInput = z.infer<typeof schema>;
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID ?? "demo";
 
+// function ResetPasswordForm() {
+//   const router = useRouter();
+//   const searchParams = useSearchParams();
+//   const {
+//     register,
+//     handleSubmit,
+//     formState: { errors, isSubmitting },
+//   } = useForm<ResetPasswordInput>({
+//     resolver: zodResolver(schema),
+//     defaultValues: {
+//       email: searchParams.get("email") ?? "",
+//       otp: searchParams.get("otp") ?? "",
+//     },
+//   });
+
+//   async function onSubmit(data: ResetPasswordInput) {
+//     const res = await fetch(`${API}/auth/reset-password`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "x-tenant-id": TENANT_ID,
+//       },
+//       body: JSON.stringify({
+//         email: data.email,
+//         otp: data.otp,
+//         new_password: data.new_password,
+//       }),
+//     });
+
+//     if (!res.ok) {
+//       const err = await res.json().catch(() => ({}));
+//       toast.error(err.message ?? err.detail ?? "Unable to reset password");
+//       return;
+//     }
+
+//     toast.success("Password reset successfully");
+//     router.push("/login");
+//   }
+
 function ResetPasswordForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+
+  // Read from sessionStorage, not URL params
+  const email = typeof window !== "undefined" ? sessionStorage.getItem("cgr_email") ?? "" : "";
+  const otp   = typeof window !== "undefined" ? sessionStorage.getItem("cgr_otp")   ?? "" : "";
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordInput>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      email: searchParams.get("email") ?? "",
-      otp: searchParams.get("otp") ?? "",
-    },
+    defaultValues: { email, otp },
   });
+
+  // Guard: if no verified OTP in session, they didn't go through verify-otp
+  useEffect(() => {
+    if (!sessionStorage.getItem("cgr_otp")) {
+      router.replace("/forgot-password");
+    }
+  }, [router]);
 
   async function onSubmit(data: ResetPasswordInput) {
     const res = await fetch(`${API}/auth/reset-password`, {
@@ -52,6 +99,10 @@ function ResetPasswordForm() {
         new_password: data.new_password,
       }),
     });
+
+    // Clear session keys immediately after use, success or fail
+    sessionStorage.removeItem("cgr_otp");
+    sessionStorage.removeItem("cgr_email");
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));

@@ -110,7 +110,7 @@ type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE";
   //   );
   // }
 
-  const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+  const API = "/api/proxy"
 
 // function AttendanceSession({ batchId, date }: { batchId: string; date: string }) {
 //   const store = useAcademicStore();
@@ -144,7 +144,7 @@ function AttendanceSession({ batchId, date }: { batchId: string; date: string })
   
   const [loadingStudents, setLoadingStudents] = useState(true);
 
-  const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+  const API = "/api/proxy"
 
   useEffect(() => {
     setLoadingStudents(true);

@@ -9,24 +9,12 @@ import { StudentForm, type StudentFormValues } from "@/components/students/Stude
 import type { Student } from "@/lib/types/academic";
 
 // ── API helpers ────────────────────────────────────────────────────────────────
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
 function authHeaders(): HeadersInit {
-  let token: string | null = null;
-  let tenantId: string | null = null;
-  try {
-    const authRaw  = localStorage.getItem("coachgenie-auth");
-    const authData = authRaw ? JSON.parse(authRaw)?.state : null;
-    token    = authData?.accessToken ?? null;
-    tenantId = authData?.tenantId    ?? null;
-  } catch {
-    token = sessionStorage.getItem("access_token");
-  }
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (token)    headers["Authorization"] = `Bearer ${token}`;
-  if (tenantId) headers["X-Tenant-Id"]   = tenantId;
-  return headers;
+  return { "Content-Type": "application/json" };
 }
+
 
 /** Compute fee summary from invoices array */
 function computeFees(invoices: any[]) {

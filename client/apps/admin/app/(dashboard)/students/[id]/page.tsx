@@ -8,19 +8,12 @@ import { cn } from "@/lib/utils";
 import { EnrollmentDialog } from "@/components/students/EnrollmentDialog";
 
 // ── API helpers ────────────────────────────────────────────────
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
 function authHeaders(): HeadersInit {
-  const raw   = localStorage.getItem("coachgenie-auth");
-  const state = raw ? JSON.parse(raw)?.state : null;
-  const token    = state?.accessToken;
-  const tenantId = state?.tenantId;
-  return {
-    "Content-Type": "application/json",
-    ...(token    ? { Authorization: `Bearer ${token}` } : {}),
-    ...(tenantId ? { "X-Tenant-Id": tenantId }          : {}),
-  };
+  return { "Content-Type": "application/json" };
 }
+
 
 const STATUS_STYLE: Record<string, string> = {
   ACTIVE:    "bg-emerald-50 text-emerald-700 border-emerald-200",

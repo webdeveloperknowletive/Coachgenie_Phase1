@@ -84,7 +84,7 @@ import { X, CheckCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const API = "/api/proxy"
 
 function authHeaders(): HeadersInit {
   let token: string | null = null;
