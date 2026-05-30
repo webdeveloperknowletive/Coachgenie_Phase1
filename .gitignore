@@ -6,3 +6,7 @@ client.zip/
 ai-coach-3/
 generated_reports/
 *.pdf
+node_modules
+backend/node_modules/
+backend/package.json
+backend/pnpm-lock.yaml
