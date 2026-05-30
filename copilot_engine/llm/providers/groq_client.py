@@ -269,19 +269,44 @@ class GroqProvider(BaseLLMProvider):
 
         try:
 
+            # Normalize messages
+            formatted_messages = []
+
+            for msg in messages:
+
+                # If msg is already a dict
+                if isinstance(msg, dict):
+
+                    role = msg.get("role")
+                    content = msg.get("content")
+
+                # If msg is an object/dataclass/pydantic model
+                else:
+
+                    role = getattr(msg, "role", None)
+                    content = getattr(msg, "content", None)
+
+                # Validation
+                if not role or not content:
+
+                    raise ValueError(
+                        f"Invalid message format: {msg}"
+                    )
+
+                formatted_messages.append(
+                    {
+                        "role": role,
+                        "content": content,
+                    }
+                )
+
             response = await asyncio.wait_for(
 
                 self.client.chat.completions.create(
 
                     model=self.default_model,
 
-                    messages=[
-                        {
-                            "role": msg.role,
-                            "content": msg.content,
-                        }
-                        for msg in messages
-                    ],
+                    messages=formatted_messages,
 
                     temperature=temperature,
 
@@ -314,11 +339,13 @@ class GroqProvider(BaseLLMProvider):
 
         except Exception as e:
 
+            logger.exception("Groq generation failed")
+
             raise LLMException(
                 f"Groq error: {str(e)}"
             )
 
-            
+
     async def generate_stream(
         self,
         messages,

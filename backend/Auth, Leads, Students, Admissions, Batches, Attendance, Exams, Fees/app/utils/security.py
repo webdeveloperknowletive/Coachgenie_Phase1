@@ -1,7 +1,8 @@
 import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
+import jwt
+from jwt.exceptions import PyJWTError
 from passlib.context import CryptContext
 from app.config import settings
 from app.utils.exceptions import UnauthorizedError
@@ -51,7 +52,7 @@ def decode_access_token(token: str) -> dict:
         if payload.get("type") != "access":
             raise UnauthorizedError("Invalid token type.")
         return payload
-    except JWTError:
+    except PyJWTError:
         raise UnauthorizedError("Invalid or expired token.")
 
 

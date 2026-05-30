@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Users, Plus, X, RefreshCw } from "lucide-react";
+import { Users, Plus, X, RefreshCw, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAcademicStore } from "@/lib/stores/academic.store";
@@ -210,6 +210,7 @@ export default function BatchesPage() {
   const [fetchError,    setFetchError]    = useState<string | null>(null);
   const [showCreate,    setShowCreate]    = useState(false);
   const [editBatch,     setEditBatch]     = useState<Batch | null>(null);
+  const [generatingReport, setGeneratingReport] = useState<string | null>(null);
 
   // ── Fetch batches ──────────────────────────────────────────
   const fetchBatches = useCallback(async () => {
@@ -323,6 +324,93 @@ export default function BatchesPage() {
     }
   }
 
+  async function handleGenerateReport(batch: Batch) {
+
+    try {
+
+      setGeneratingReport(batch.id);
+
+      const response = await fetch(
+        "http://127.0.0.1:8001/reports/batch-performance",
+        {
+          method: "POST",
+
+          headers: {
+            ...authHeaders(),
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            batch_data: {
+              batch_id: batch.id,
+              batch_name: batch.name,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+
+        let errorMessage =
+          "Failed to generate batch report";
+
+        try {
+
+          const err = await response.json();
+
+          errorMessage =
+            err.detail ||
+            err.message ||
+            errorMessage;
+
+        } catch {}
+
+        throw new Error(errorMessage);
+      }
+
+      // ✅ PDF BLOB
+      const blob =
+        await response.blob();
+
+      // ✅ TEMP URL
+      const url =
+        window.URL.createObjectURL(blob);
+
+      // ✅ DOWNLOAD LINK
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+
+      a.download =
+        `batch_report_${batch.name}_${Date.now()}.pdf`;
+
+      document.body.appendChild(a);
+
+      a.click();
+
+      a.remove();
+
+      // ✅ CLEANUP
+      window.URL.revokeObjectURL(url);
+
+      toast.success(
+        "Batch report downloaded!"
+      );
+
+    } catch (err: any) {
+
+      toast.error(
+        err.message ??
+        "Failed to generate report"
+      );
+
+    } finally {
+
+      setGeneratingReport(null);
+    }
+  }
+
   // ── Filtered list ─────────────────────────────────────────
   const subjects = ["ALL", ...Array.from(new Set(batches.map(b => b.subject).filter(Boolean)))];
   const filtered = batches
@@ -431,7 +519,7 @@ export default function BatchesPage() {
                     {batch.subject && <span className="rounded-md bg-muted px-2 py-0.5">{batch.subject}</span>}
                   </div>
 
-                  {batch.schedule.length > 0 && (
+                  {/* {batch.schedule.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {batch.schedule.map((s: any, i: number) => (
                         <span key={i} className="rounded-md bg-muted px-2 py-0.5 text-[10px]">
@@ -439,7 +527,25 @@ export default function BatchesPage() {
                         </span>
                       ))}
                     </div>
-                  )}
+                  )} */}
+
+                  <div className="flex flex-wrap gap-1">
+                    {Array.isArray(batch.schedule) &&
+                    batch.schedule.length > 0 ? (
+                      batch.schedule.map((s: any, i: number) => (
+                        <span
+                          key={i}
+                          className="rounded-md bg-muted px-2 py-0.5 text-[10px]"
+                        >
+                          {s?.day || "N/A"} {s?.time || ""}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground">
+                        No schedule
+                      </span>
+                    )}
+                  </div>
 
                   {syllabusTotal > 0 && (
                     <div className="space-y-1">
@@ -459,6 +565,24 @@ export default function BatchesPage() {
                       className="flex-1 text-center rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-accent transition-colors">
                       View Details
                     </Link>
+                    {/* Generate Report Button */}
+                    <button
+                      onClick={() => handleGenerateReport(batch)}
+                      disabled={generatingReport === batch.id}
+                      className="rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-accent transition-colors flex items-center gap-1"
+                    >
+                      {generatingReport === batch.id ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Generating
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="h-3 w-3" />
+                          Report
+                        </>
+                      )}
+                    </button>
                     <button onClick={() => setEditBatch(batch)}
                       className="rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-accent transition-colors">
                       Edit

@@ -8,7 +8,7 @@ class RegisterRequest(BaseModel):
     first_name: str
     last_name: str
     phone: str | None = None
-    role: str = "student"
+    
 
     @field_validator("password")
     @classmethod
@@ -23,14 +23,6 @@ class RegisterRequest(BaseModel):
             raise ValueError("Must contain a digit.")
         if not re.search(r"[@$!%*?&]", v):
             raise ValueError("Must contain special character (@$!%*?&).")
-        return v
-
-    @field_validator("role")
-    @classmethod
-    def valid_role(cls, v: str) -> str:
-        allowed = {"owner", "counselor", "tutor", "parent", "student"}
-        if v not in allowed:
-            raise ValueError(f"Role must be one of {allowed}")
         return v
 
 

@@ -1,5 +1,10 @@
 from fastapi import APIRouter, Depends
-from app.dependencies import get_tenant, get_current_user, DB
+from app.dependencies import (
+    get_tenant,
+    get_current_user,
+    require_roles,
+    DB,
+)
 from app.schemas.ai import (
     StartSessionRequest, ChatRequest,
     ChatResponse, SessionOut, MessageOut
@@ -21,9 +26,22 @@ class CopilotChatRequest(BaseModel):
 
 
 @router.post("/copilot/chat")
-async def copilot_chat(body: CopilotChatRequest):
+async def copilot_chat(
+    body: CopilotChatRequest,
+    tenant=Depends(get_tenant),
+    current_user=Depends(
+        require_roles(
+            "owner",
+            "counselor",
+            "tutor",
+            "student",
+            "parent",
+        )
+    ),
+):
 
     try:
+
         async with httpx.AsyncClient(timeout=60.0) as client:
 
             response = await client.post(
@@ -31,15 +49,19 @@ async def copilot_chat(body: CopilotChatRequest):
                 json={
                     "message": body.message,
                     "context": body.context,
+                    "user_id": str(current_user.id),
+                    "tenant_id": str(tenant.id),
+                    "role": current_user.role,
                 },
             )
 
         return response.json()
 
-    except Exception as e:
+    except Exception:
+
         return {
             "success": False,
-            "message": str(e),
+            "message": "AI service unavailable",
         }
 
 @router.post("/sessions", status_code=201)
@@ -49,6 +71,20 @@ async def start_session(
     tenant=Depends(get_tenant),
     current_user=Depends(get_current_user),
 ):
+    restricted_features = {
+    "institute_analytics": ["owner"],
+}
+
+    if body.feature in restricted_features:
+
+        allowed_roles = restricted_features[body.feature]
+
+        if current_user.role not in allowed_roles:
+
+            return {
+                "success": False,
+                "message": "Access denied",
+            }
     session = await ai_service.start_session(
         db,
         str(tenant.id),
@@ -57,33 +93,6 @@ async def start_session(
         str(body.student_id) if body.student_id else None
     )
     return {"success": True, "data": SessionOut.model_validate(session)}
-
-@router.post("/copilot/chat")
-async def copilot_chat(
-    body: CopilotChatRequest,
-):
-
-    try:
-
-        async with httpx.AsyncClient(timeout=60.0) as client:
-
-            response = await client.post(
-                f"{COPILOT_URL}/copilot/chat",
-                json={
-                    "message": body.message,
-                    "context": body.context,
-                    "user_id": body.user_id or "demo-user",
-                },
-            )
-
-        return response.json()
-
-    except Exception as e:
-
-        return {
-            "success": False,
-            "message": str(e),
-        }
 
 @router.post("/sessions/{session_id}/chat")
 async def chat(

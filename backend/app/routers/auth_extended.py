@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from app.dependencies import get_tenant, get_current_user, DB
 from app.schemas.auth_extended import (
     ForgotPasswordRequest, VerifyOTPRequest,
@@ -6,13 +6,16 @@ from app.schemas.auth_extended import (
     UpdateProfileRequest, ProfileOut
 )
 from app.services import auth_extended as auth_ext_service
+from app.core.rate_limit import limiter
 
 router = APIRouter(prefix="/auth", tags=["Auth Extended"])
 
 
 @router.post("/forgot-password")
+@limiter.limit("3/minute")
 async def forgot_password(
     body: ForgotPasswordRequest,
+    request: Request,
     db: DB,
     tenant=Depends(get_tenant),
 ):
@@ -24,8 +27,10 @@ async def forgot_password(
 
 
 @router.post("/verify-otp")
+@limiter.limit("3/minute")
 async def verify_otp(
     body: VerifyOTPRequest,
+    request: Request,
     db: DB,
     tenant=Depends(get_tenant),
 ):

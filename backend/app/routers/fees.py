@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends
 from app.dependencies import get_tenant, require_roles, DB
 from app.schemas.fee import FeeStructureCreate, FeeInvoiceCreate, FeeInvoiceOut, PaymentCreate, PaymentOut
 from app.services import fee as fee_service
+from sqlalchemy import select
+from fastapi import HTTPException
+from app.models.student import Student
 
 router = APIRouter(prefix="/fees", tags=["Fees"])
 
@@ -49,10 +52,57 @@ async def student_invoices(
     student_id: str,
     db: DB,
     tenant=Depends(get_tenant),
-    current_user=Depends(require_roles("owner", "counselor", "student", "parent")),
+    current_user=Depends(
+        require_roles("owner", "counselor", "student", "parent")
+    ),
 ):
-    invoices = await fee_service.get_student_invoices(db, str(tenant.id), student_id)
-    return {"success": True, "data": [FeeInvoiceOut.model_validate(i) for i in invoices]}
+
+    # STAFF ROLES CAN ACCESS ANY STUDENT
+    if current_user.role in ["owner", "counselor"]:
+        invoices = await fee_service.get_student_invoices(
+            db,
+            str(tenant.id),
+            student_id
+        )
+
+        return {
+            "success": True,
+            "data": [FeeInvoiceOut.model_validate(i) for i in invoices]
+        }
+
+    # STUDENT/PARENT CAN ONLY ACCESS THEIR OWN DATA
+    student_query = await db.execute(
+        select(Student).where(
+            Student.user_id == current_user.id,
+            Student.tenant_id == tenant.id
+        )
+    )
+
+    student = student_query.scalar_one_or_none()
+
+    if not student:
+        raise HTTPException(
+            status_code=403,
+            detail="Student record not found"
+        )
+
+    # BLOCK ACCESS TO OTHER STUDENTS
+    if str(student.id) != student_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied"
+        )
+
+    invoices = await fee_service.get_student_invoices(
+        db,
+        str(tenant.id),
+        student_id
+    )
+
+    return {
+        "success": True,
+        "data": [FeeInvoiceOut.model_validate(i) for i in invoices]
+    }
 
 @router.post("/invoices", status_code=201)
 async def create_invoice(

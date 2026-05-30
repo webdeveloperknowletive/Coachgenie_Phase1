@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.dependencies import get_tenant, get_current_user, DB
+from app.dependencies import get_tenant, get_current_user, DB, require_roles
 from app.services import dashboard as dashboard_service
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
@@ -67,7 +67,7 @@ async def get_dashboard(
 async def owner_dashboard(
     db: DB,
     tenant=Depends(get_tenant),
-    current_user=Depends(get_current_user),
+    current_user=Depends(require_roles("owner")),
 ):
     data = await dashboard_service.get_owner_dashboard(db, str(tenant.id))
     return {"success": True, "data": data}
@@ -77,7 +77,7 @@ async def owner_dashboard(
 async def counselor_dashboard(
     db: DB,
     tenant=Depends(get_tenant),
-    current_user=Depends(get_current_user),
+    current_user=Depends(require_roles("counselor")),
 ):
     data = await dashboard_service.get_counselor_dashboard(db, str(tenant.id))
     return {"success": True, "data": data}
@@ -87,7 +87,7 @@ async def counselor_dashboard(
 async def tutor_dashboard(
     db: DB,
     tenant=Depends(get_tenant),
-    current_user=Depends(get_current_user),
+    current_user=Depends(require_roles("owner", "tutor")),
 ):
     data = await dashboard_service.get_tutor_dashboard(
         db, str(tenant.id), str(current_user.id)

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams }      from "next/navigation";
 import { format }               from "date-fns";
-import { Save, CheckCircle }    from "lucide-react";
+import { Save, CheckCircle, FileText }    from "lucide-react";
 import { toast }                from "sonner";
 import { api }                  from "@/lib/api";
 import { useAcademicStore }     from "@/lib/stores/academic.store";
@@ -377,6 +377,110 @@ export default function AttendancePage() {
     setStarted(false);
   }
 
+  // ──────────────────────────────────────────────────────────────
+  // REPORT GENERATION FUNCTION
+  // ──────────────────────────────────────────────────────────────
+
+  async function handleGenerateAttendanceReport() {
+
+    if (!selectedBatch) {
+
+      toast.error("Please select a batch first");
+
+      return;
+    }
+
+    try {
+
+      toast.loading(
+        "Generating attendance report...",
+        {
+          id: "attendance-report",
+        }
+      );
+
+      const response = await fetch(
+        "http://127.0.0.1:8001/reports/attendance-report",
+        {
+          method: "POST",
+
+          headers: {
+            ...authHeaders(),
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            attendance_data: {
+              batch_id: selectedBatch,
+              date,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+
+        let errorMessage =
+          "Failed to generate attendance report";
+
+        try {
+
+          const err = await response.json();
+
+          errorMessage =
+            err.detail ||
+            err.message ||
+            errorMessage;
+
+        } catch {}
+
+        throw new Error(errorMessage);
+      }
+
+      // ✅ GET PDF BLOB
+      const blob = await response.blob();
+
+      // ✅ CREATE TEMP URL
+      const url =
+        window.URL.createObjectURL(blob);
+
+      // ✅ CREATE DOWNLOAD LINK
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+
+      a.download =
+        `attendance_report_${Date.now()}.pdf`;
+
+      document.body.appendChild(a);
+
+      a.click();
+
+      a.remove();
+
+      // ✅ CLEANUP
+      window.URL.revokeObjectURL(url);
+
+      toast.success(
+        "Attendance report downloaded!",
+        {
+          id: "attendance-report",
+        }
+      );
+
+    } catch (err: any) {
+
+      toast.error(
+        err.message ??
+        "Failed to generate attendance report",
+        {
+          id: "attendance-report",
+        }
+      );
+    }
+  }
+
   return (
     <div className="space-y-5">
       <div>
@@ -413,12 +517,23 @@ export default function AttendancePage() {
           />
         </div>
 
-        <button
-          onClick={() => setStarted(true)}
-          className="h-10 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          Start Session
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleGenerateAttendanceReport}
+            disabled={!selectedBatch}
+            className="flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium hover:bg-accent transition-colors disabled:opacity-50"
+          >
+            <FileText className="h-4 w-4" />
+            Attendance Report
+          </button>
+
+          <button
+            onClick={() => setStarted(true)}
+            className="h-10 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            Start Session
+          </button>
+        </div>
       </div>
 
       {/* Session grid */}

@@ -181,6 +181,8 @@ class Settings(BaseSettings):
     ENABLE_AGENT_MEMORY: bool = False
 
     ENABLE_MULTI_MODEL_ROUTING: bool = False
+    
+    PRODUCTION: bool = False
 
     # =====================================================
     # PYDANTIC SETTINGS CONFIG

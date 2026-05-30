@@ -4,9 +4,14 @@ client.zip/
 *__pycache__/
 *.env.local
 ai-coach-3/
+<<<<<<< HEAD
+coach-ai-4/
+generated_reports/
+=======
 generated_reports/
 *.pdf
-node_modules
+>>>>>>> 182a6946ea4e458b536f2196ad85904b8c71c98f
+
 backend/node_modules/
 backend/package.json
 backend/pnpm-lock.yaml

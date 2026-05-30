@@ -88,6 +88,7 @@
 
 
 import asyncio
+import os
 from datetime import date, timedelta
 
 from sqlalchemy import select
@@ -349,6 +350,8 @@ async def seed():
     print("  Meera Patel  — via walk-in (admission.lead_id is NULL)")
     print("─" * 40)
 
+if os.getenv("ENVIRONMENT") != "development":
+    raise Exception("Seed disabled outside development")
 
 if __name__ == "__main__":
     asyncio.run(seed())

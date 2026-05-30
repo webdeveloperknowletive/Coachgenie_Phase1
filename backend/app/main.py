@@ -94,6 +94,15 @@ from app.routers import (
     auth, tenants, leads, students, admissions,
     batches, attendance, exams, fees, notifications, ai,parents, tutors, admins,
 )
+
+from app.routers.ai_reports import (
+    router as ai_reports_router,
+)
+from app.routers import growth_cards
+from app.routers import auth_extended, dashboard
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.middleware import SlowAPIMiddleware
 from app.routers.ai_reports import router as ai_reports_router
 from app.routers import growth_cards, auth_extended, dashboard, syllabus
 
@@ -116,23 +125,34 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.APP_NAME,
+    version="1.0.0",
+    docs_url="/docs",
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+limiter = Limiter(key_func=get_remote_address)
+
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
-        content={"success": False, "message": str(exc) if settings.DEBUG else "Internal server error"},
+        content={"success": False, "message": "Internal server error"},
         headers={
             "Access-Control-Allow-Origin":      "http://localhost:3000",
             "Access-Control-Allow-Credentials": "true",

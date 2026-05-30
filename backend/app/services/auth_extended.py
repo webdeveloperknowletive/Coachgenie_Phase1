@@ -1,4 +1,4 @@
-import random
+import secrets
 import string
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,8 +12,8 @@ from app.utils.exceptions import (
 from app.config import settings
 
 
-def generate_otp(length: int = 6) -> str:
-    return ''.join(random.choices(string.digits, k=length))
+def generate_otp():
+    return f"{secrets.randbelow(1000000):06d}"
 
 
 # async def _send_otp_email(email: str, otp: str, purpose: str):
@@ -148,7 +148,6 @@ async def forgot_password(
 
     return {
         "message": "If this email exists, an OTP has been sent.",
-        "dev_otp": otp if not settings.SMTP_HOST else None
     }
 
 

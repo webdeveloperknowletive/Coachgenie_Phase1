@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Plus, X, RefreshCw } from "lucide-react";
+import { Plus, X, RefreshCw, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAcademicStore } from "@/lib/stores/academic.store";
@@ -214,6 +214,146 @@ export default function StudentsPage() {
     }
   }
 
+  // ── Generate Student Report ───────────────────────────────────────────────
+async function handleGenerateStudentReport() {
+
+  try {
+
+    toast.loading("Generating student report...", {
+      id: "student-report",
+    });
+
+    // =====================================================
+    // FETCH STUDENTS
+    // =====================================================
+
+    const studentsRes = await fetch(`${API}/students/`, {
+      headers: authHeaders(),
+    });
+
+    if (!studentsRes.ok) {
+
+      throw new Error(
+        "Failed to fetch students"
+      );
+    }
+
+    const studentsJson = await studentsRes.json();
+
+    const studentsData = Array.isArray(studentsJson)
+      ? studentsJson
+      : (
+          studentsJson.data ??
+          studentsJson.items ??
+          []
+        );
+
+    // =====================================================
+    // GENERATE REPORT
+    // =====================================================
+
+    const res = await fetch(
+      "http://127.0.0.1:8001/reports/student-performance",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          student_data: {
+            generated_at: new Date().toISOString(),
+
+            total_students:
+              studentsData.length,
+
+            students: studentsData.map(
+              (s: any) => ({
+                id: s.id,
+                first_name: s.first_name,
+                last_name: s.last_name,
+                email: s.email,
+                phone: s.phone,
+                current_class: s.current_class,
+                target_exam: s.target_exam,
+                parent_name: s.parent_name,
+                parent_phone: s.parent_phone,
+                is_active: s.is_active,
+                joined_at: s.joined_at,
+              })
+            ),
+          },
+        }),
+      }
+    );
+
+    // =====================================================
+    // HANDLE BACKEND ERRORS
+    // =====================================================
+
+    if (!res.ok) {
+
+      const errorText =
+        await res.text();
+
+      throw new Error(
+        errorText ||
+        "Failed to generate student report"
+      );
+    }
+
+    // =====================================================
+    // DOWNLOAD PDF
+    // =====================================================
+
+    const blob = await res.blob();
+
+    const downloadUrl =
+      window.URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    link.href = downloadUrl;
+
+    link.download =
+      `student-report-${Date.now()}.pdf`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(
+      downloadUrl
+    );
+
+    toast.success(
+      "Student report downloaded!",
+      {
+        id: "student-report",
+      }
+    );
+
+  } catch (err: any) {
+
+    console.error(
+      "Student report error:",
+      err
+    );
+
+    toast.error(
+      err?.message ??
+      "Failed to generate student report",
+      {
+        id: "student-report",
+      }
+    );
+  }
+}
+
   // ── Render ─────────────────────────────────────────────────────────────────
   const activeCount = students.filter((s) => s.status === "ACTIVE").length;
 
@@ -231,6 +371,14 @@ export default function StudentsPage() {
           <button onClick={fetchStudents} disabled={loading}
             className="rounded-lg border p-2 hover:bg-accent transition-colors disabled:opacity-50" title="Refresh">
             <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+          </button>
+          {/* Generate Report Button */}
+          <button
+            onClick={handleGenerateStudentReport}
+            className="flex items-center gap-1.5 rounded-lg border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
+          >
+            <FileText className="h-4 w-4" />
+            Generate Report
           </button>
           {/* <button onClick={() => setShowForm(true)}
             className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm">

@@ -27,7 +27,7 @@ async def register_user(db: AsyncSession, tenant_id: str, data: dict) -> User:
         first_name=data["first_name"],
         last_name=data["last_name"],
         phone=data.get("phone"),
-        role=data.get("role", "student"),
+        role="student",
     )
     db.add(user)
     await db.flush()

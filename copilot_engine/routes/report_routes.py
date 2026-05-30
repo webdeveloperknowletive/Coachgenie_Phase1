@@ -1,3 +1,4 @@
+# copilot_engine/routes/report_routes.py
 import logging
 
 from pathlib import Path
@@ -20,6 +21,7 @@ from copilot_engine.reports.schemas.report_schema import (
 from copilot_engine.reports.services.report_service import (
     ReportService,
 )
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -132,20 +134,180 @@ async def generate_pdf_report(
             ),
         )
         
+# @router.post("/student-performance")
+# async def generate_student_performance_report(
+#     payload: StudentReportRequest,
+# ):
+
+#     pdf_path = await ReportService.generate_student_report(
+#         student_data=payload.student_data,
+#     )
+
+#     return {
+#         "success": True,
+#         "pdf_url": pdf_path,
+#     }
+    
+# @router.post("/student-performance")
+# async def generate_student_performance_report(
+#     payload: StudentReportRequest,
+# ):
+
+#     try:
+
+#         logger.info(
+#             f"Incoming payload: {payload.dict()}"
+#         )
+
+#         logger.info(
+#             f"Student data: {payload.student_data}"
+#         )
+
+#         if not payload.student_data:
+
+#             raise HTTPException(
+#                 status_code=400,
+#                 detail="student_data is empty",
+#             )
+
+#         pdf_path = await ReportService.generate_student_report(
+#             student_data=payload.student_data,
+#         )
+
+#         return {
+#             "success": True,
+#             "pdf_url": pdf_path,
+#         }
+
+#     except Exception as e:
+
+#         logger.exception(
+#             "Student report generation failed"
+#         )
+
+#         raise HTTPException(
+#             status_code=500,
+#             detail=str(e),
+#         )
+
+# @router.post("/student-performance")
+# async def generate_student_performance_report(
+#     payload: StudentReportRequest,
+# ):
+
+#     try:
+
+#         logger.info(
+#             f"FULL PAYLOAD: {payload.dict()}"
+#         )
+
+#         if not payload.student_data:
+
+#             raise HTTPException(
+#                 status_code=400,
+#                 detail="student_data is empty",
+#             )
+
+#         pdf_path = await ReportService.generate_student_report(
+#             student_data=payload.student_data,
+#         )
+
+#         logger.info(
+#             f"Generated PDF: {pdf_path}"
+#         )
+
+#         return {
+#             "success": True,
+#             "pdf_url": pdf_path,
+#         }
+
+#     except Exception as e:
+
+#         logger.exception(
+#             "REPORT GENERATION FAILED"
+#         )
+
+#         raise HTTPException(
+#             status_code=500,
+#             detail=str(e),
+#         )
+
+# @router.post("/attendance-report")
+# async def generate_attendance_report(
+#     payload: AttendanceReportRequest,
+# ):
+
+#     pdf_path = await ReportService.generate_attendance_report(
+#         attendance_data=payload.attendance_data,
+#     )
+
+#     return {
+#         "success": True,
+#         "pdf_url": pdf_path,
+#     }
+    
+# @router.post("/batch-performance")
+# async def generate_batch_performance_report(
+#     payload: BatchReportRequest,
+# ):
+
+#     pdf_path = await ReportService.generate_batch_report(
+#         batch_data=payload.batch_data,
+#     )
+
+#     return {
+#         "success": True,
+#         "pdf_url": pdf_path,
+#     }
+
+
 @router.post("/student-performance")
 async def generate_student_performance_report(
     payload: StudentReportRequest,
 ):
 
-    pdf_path = await ReportService.generate_student_report(
-        student_data=payload.student_data,
-    )
+    try:
 
-    return {
-        "success": True,
-        "pdf_url": pdf_path,
-    }
-    
+        logger.info(
+            f"FULL PAYLOAD: {payload.dict()}"
+        )
+
+        if not payload.student_data:
+
+            raise HTTPException(
+                status_code=400,
+                detail="student_data is empty",
+            )
+
+        pdf_path = await ReportService.generate_student_report(
+            student_data=payload.student_data,
+        )
+
+        logger.info(
+            f"Generated PDF: {pdf_path}"
+        )
+
+        print("FINAL PDF PATH:", pdf_path)
+        print("EXISTS:", os.path.exists(pdf_path))
+
+        return FileResponse(
+            path=pdf_path,
+            media_type="application/pdf",
+            filename="student-report.pdf",
+        )
+
+    except Exception as e:
+
+        logger.exception(
+            "REPORT GENERATION FAILED"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
+
+
 @router.post("/attendance-report")
 async def generate_attendance_report(
     payload: AttendanceReportRequest,
@@ -155,21 +317,47 @@ async def generate_attendance_report(
         attendance_data=payload.attendance_data,
     )
 
-    return {
-        "success": True,
-        "pdf_url": pdf_path,
-    }
-    
+    return FileResponse(
+        path=pdf_path,
+        media_type="application/pdf",
+        filename=os.path.basename(pdf_path),
+    )
+
+
+from fastapi.responses import FileResponse
+import os
+
+
 @router.post("/batch-performance")
 async def generate_batch_performance_report(
     payload: BatchReportRequest,
 ):
 
-    pdf_path = await ReportService.generate_batch_report(
-        batch_data=payload.batch_data,
-    )
+    try:
 
-    return {
-        "success": True,
-        "pdf_url": pdf_path,
-    }
+        pdf_path = await ReportService.generate_batch_report(
+            batch_data=payload.batch_data,
+        )
+
+        print("PDF PATH:", pdf_path)
+
+        if not os.path.exists(pdf_path):
+
+            raise Exception(
+                f"PDF file not found: {pdf_path}"
+            )
+
+        return FileResponse(
+            path=pdf_path,
+            media_type="application/pdf",
+            filename=os.path.basename(pdf_path),
+        )
+
+    except Exception as e:
+
+        print("BATCH REPORT ERROR:", str(e))
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
