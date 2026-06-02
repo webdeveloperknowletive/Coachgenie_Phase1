@@ -12,7 +12,21 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def hash_password(password: str) -> str:
     return pwd_context.hash(password[:72])
 
+# def verify_password(plain: str, hashed: str) -> bool:
+#     return pwd_context.verify(plain[:72], hashed)
+# def verify_password(plain: str, hashed: str) -> bool:
+#     print("HASH VALUE:", repr(hashed))
+#     print("HASH LENGTH:", len(hashed) if hashed else None)
+
 def verify_password(plain: str, hashed: str) -> bool:
+    print("=" * 80)
+    print("HASH TYPE:", type(hashed))
+    print("HASH VALUE:", repr(hashed))
+    print("HASH LENGTH:", len(hashed) if hashed else None)
+    print("=" * 80)
+
+    return pwd_context.verify(plain[:72], hashed)
+
     return pwd_context.verify(plain[:72], hashed)
 
 def create_access_token(data: dict) -> str:

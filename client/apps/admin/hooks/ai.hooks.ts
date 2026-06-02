@@ -250,7 +250,29 @@ export function useCoachGenieChat({
         return;
       }
 
-      if (!accessToken || !user?.id) {
+      // console.log("document.cookie =", document.cookie);
+
+      // console.log(
+      //   "localStorage token =",
+      //   localStorage.getItem("token")
+      // );
+
+      // console.log(
+      //   "sessionStorage token =",
+      //   sessionStorage.getItem("token")
+      // );
+
+      // console.log("accessToken =", accessToken);
+      // console.log("user =", user);
+
+      // if (!accessToken || !user?.id) {
+      //   console.warn("No auth token — cannot send AI request.");
+      //   return;
+      // }
+
+      const token = accessToken || localStorage.getItem("token");
+
+      if (!token || !user?.id) {
         console.warn("No auth token — cannot send AI request.");
         return;
       }
@@ -268,7 +290,7 @@ export function useCoachGenieChat({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify({ user_id: user.id, message, context }),
           signal: abortRef.current.signal,

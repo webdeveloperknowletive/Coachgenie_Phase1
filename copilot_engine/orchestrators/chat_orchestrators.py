@@ -1,5 +1,6 @@
+# copilot_engine/orchestrators/chat_orchestrators.py
 import logging
-
+import os
 from copilot_engine.llm.providers.groq_client import (
     GroqProvider,
 )
@@ -90,18 +91,20 @@ class ChatOrchestrator:
                 PDFGenerator,
             )
 
-            pdf_url = PDFGenerator.generate(
+            pdf_path = PDFGenerator.generate(
                 content=response,
+            )
+            
+            filename = os.path.basename(pdf_path)
+            
+            report_url = (
+                f"http://127.0.0.1:8001/generated_reports/{filename}"
             )
 
             return {
-                "message": (
-                    "Your PDF report has been generated successfully."
-                ),
-
+                "message": "Your PDF report has been generated successfully.",
                 "type": "report",
-
-                "report_url": pdf_url,
+                "report_url": report_url,
             }
 
         # ============================================

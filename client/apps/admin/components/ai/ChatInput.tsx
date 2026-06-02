@@ -1,5 +1,5 @@
 "use client";
-import { useRef, type FormEvent, type KeyboardEvent } from "react";
+import { useRef, type FormEvent, type KeyboardEvent, type SyntheticEvent } from "react";
 import { Send, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -7,7 +7,7 @@ interface ChatInputProps {
   input:       string;
   isLoading:   boolean;
   onInputChange:(e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onSubmit:    (e: FormEvent<HTMLFormElement>) => void;
+  onSubmit:    (e: SyntheticEvent<HTMLFormElement>) => void;
   onStop?:     () => void;
   placeholder?: string;
 }

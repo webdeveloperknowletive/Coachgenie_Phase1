@@ -8,6 +8,7 @@ from app.utils.security import (
     hash_token, refresh_token_expiry
 )
 from app.utils.exceptions import UnauthorizedError, ConflictError
+from backend.app.schemas import user
 
 
 async def register_user(db: AsyncSession, tenant_id: str, data: dict) -> User:
@@ -40,6 +41,10 @@ async def login_user(db: AsyncSession, tenant_id: str, email: str, password: str
         )
     )
     user = result.scalar_one_or_none()
+
+    print("EMAIL:", user.email if user else None)
+    print("PASSWORD HASH:", repr(user.password_hash) if user else None)
+    print("HASH LENGTH:", len(user.password_hash) if user and user.password_hash else None)
 
     if not user or not user.is_active or not verify_password(password, user.password_hash):
         raise UnauthorizedError("Invalid credentials.")

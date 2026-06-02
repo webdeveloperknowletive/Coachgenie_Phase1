@@ -141,3 +141,40 @@ ON ai_agent_runs(created_at DESC);
 
 CREATE INDEX idx_ai_embeddings_entity
 ON ai_embeddings(entity_type, entity_id);
+
+ALTER TABLE batches
+ADD COLUMN subjects JSONB;
+
+ALTER TABLE leads
+ADD COLUMN documents JSONB;
+
+ALTER TABLE leads
+ADD COLUMN subjects JSONB;
+
+ALTER TABLE admissions
+ADD COLUMN batch_id UUID;
+
+ALTER TABLE admissions
+ADD COLUMN board_name TEXT;
+
+ALTER TABLE admissions
+ADD COLUMN batch_name TEXT;
+
+ALTER TABLE admissions
+ADD COLUMN subjects JSONB;
+
+ALTER TABLE admissions
+ADD COLUMN documents JSONB;
+
+ALTER TABLE admissions
+ADD COLUMN fee_amount NUMERIC(12,2) DEFAULT 0;
+
+ALTER TABLE admissions
+ADD COLUMN fee_paid NUMERIC(12,2) DEFAULT 0;
+
+ALTER TABLE admissions
+ADD COLUMN payment_installment_schedule VARCHAR;
+
+ALTER TABLE students
+ALTER COLUMN subjects TYPE JSONB
+USING to_jsonb(subjects);

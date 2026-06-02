@@ -80,6 +80,7 @@
 #             status_code=500,
 #             detail=str(e),
 #         )
+# copilot_engine/routes/copilot.py
 from fastapi import (
     APIRouter,
     HTTPException,
