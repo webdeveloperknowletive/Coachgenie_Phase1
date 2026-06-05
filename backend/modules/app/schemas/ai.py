@@ -1,0 +1,39 @@
+from pydantic import BaseModel
+from typing import Optional
+import uuid
+
+
+class StartSessionRequest(BaseModel):
+    feature: str  # doubt_solver | career_guidance | ai_tutor | roleplay_career | institute_analytics
+    student_id: Optional[uuid.UUID] = None
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    tokens_used: int
+    session_id: str
+
+
+class SessionOut(BaseModel):
+    id: uuid.UUID
+    feature: str
+    started_at: str
+    ended_at: Optional[str] = None
+    total_tokens: Optional[int] = None
+    model_used: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class MessageOut(BaseModel):
+    id: uuid.UUID
+    role: str
+    content: str
+
+    class Config:
+        from_attributes = True

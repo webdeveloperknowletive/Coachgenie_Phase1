@@ -1,0 +1,10 @@
+{
+  "name": "@coachgenie/config",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./tsconfig": "./tsconfig.base.json",
+    "./eslint": "./eslint-base.js",
+    "./tailwind": "./tailwind.base.ts"
+  }
+}

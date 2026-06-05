@@ -1,0 +1,22 @@
+{
+  "app": { "name": "CoachGenie", "tagline": "Your AI-powered coaching platform" },
+  "nav": {
+    "dashboard": "Dashboard", "students": "Students", "sessions": "Sessions",
+    "attendance": "Attendance", "progress": "Progress", "billing": "Billing",
+    "settings": "Settings", "profile": "Profile", "logout": "Logout"
+  },
+  "actions": {
+    "save": "Save", "cancel": "Cancel", "delete": "Delete",
+    "edit": "Edit", "create": "Create", "search": "Search",
+    "filter": "Filter", "export": "Export", "import": "Import"
+  },
+  "status": {
+    "active": "Active", "inactive": "Inactive", "pending": "Pending",
+    "completed": "Completed", "cancelled": "Cancelled"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalid_email": "Enter a valid email",
+    "generic": "Something went wrong. Please try again."
+  }
+}

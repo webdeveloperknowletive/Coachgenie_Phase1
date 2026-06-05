@@ -1,0 +1,15 @@
+*.env
+backend.zip/
+client.zip/
+*__pycache__/
+*.env.local
+ai-coach-3/
+coach-ai-4/
+generated_reports/
+generated_reports/
+*.pdf
+coach-ai-5/
+
+backend/node_modules/
+backend/package.json
+backend/pnpm-lock.yaml
