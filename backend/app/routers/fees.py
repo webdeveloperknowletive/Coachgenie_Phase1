@@ -8,6 +8,21 @@ from app.models.student import Student
 
 router = APIRouter(prefix="/fees", tags=["Fees"])
 
+<<<<<<< HEAD
+=======
+@router.get("/invoices/{invoice_id}")
+async def get_invoice(
+    invoice_id: str,
+    db: DB,
+    tenant=Depends(get_tenant),
+    current_user=Depends(require_roles("owner", "counselor")),
+):
+    invoice = await fee_service.get_invoice_by_id(db, str(tenant.id), invoice_id)
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return {"success": True, "data": FeeInvoiceOut.model_validate(invoice)}
+
+>>>>>>> 01191d4 (FIxes Done and testing remaining)
 @router.get("/monthly-trend")
 async def monthly_trend(
     db: DB,

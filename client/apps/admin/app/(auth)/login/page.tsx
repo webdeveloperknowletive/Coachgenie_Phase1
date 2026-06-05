@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 // "use client";
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";
@@ -144,6 +145,8 @@
 //   );
 // }
 
+=======
+>>>>>>> 01191d4 (FIxes Done and testing remaining)
 
 "use client";
 // app/(auth)/login/page.tsx
@@ -178,6 +181,7 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(schema) });
 
+<<<<<<< HEAD
   async function onSubmit(data: LoginInput) {
     try {
       // Step 1 — authenticate against FastAPI backend
@@ -225,6 +229,139 @@ export default function LoginPage() {
       toast.error(msg);
     }
   }
+=======
+  // async function onSubmit(data: LoginInput) {
+  //   try {
+  //     // Step 1 — authenticate against FastAPI backend
+  //     const backendRes = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1"}/auth/login`,
+  //       {
+  //         method:  "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "x-tenant-id":  process.env.NEXT_PUBLIC_TENANT_ID ?? "demo",
+  //         },
+  //         body: JSON.stringify(data),
+  //       }
+  //     );
+
+  //     if (!backendRes.ok) {
+  //       const err = await backendRes.json().catch(() => ({}));
+  //       throw new Error(err.message ?? err.detail ?? "Invalid credentials");
+  //     }
+
+  //     const { access_token, refresh_token, user } = await backendRes.json();
+
+  //     // Step 2 — hand tokens to our own Next.js API route.
+  //     // It sets HttpOnly cookies. Tokens never touch client JS after this line.
+  //     const sessionRes = await fetch("/api/auth/session", {
+  //       method:  "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body:    JSON.stringify({ access_token, refresh_token, user }),
+  //     });
+
+  //     if (!sessionRes.ok) {
+  //       throw new Error("Failed to establish session");
+  //     }
+
+  //     const { user: safeUser } = await sessionRes.json();
+
+  //     // Step 3 — store only display state (name, role, email) in Zustand.
+  //     // No tokens. No localStorage token keys. No document.cookie calls.
+  //     setUser(safeUser);
+
+  //     toast.success(`Welcome back, ${safeUser.first_name ?? safeUser.email}!`);
+  //     router.push("/dashboard");
+  //   } catch (err: unknown) {
+  //     const msg = err instanceof Error ? err.message : "Something went wrong";
+  //     toast.error(msg);
+  //   }
+  // }
+  async function onSubmit(data: LoginInput) {
+  try {
+    console.log("Starting login...");
+
+    // Step 1: Login to FastAPI backend
+    const backendRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1"}/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": process.env.NEXT_PUBLIC_TENANT_ID ?? "demo",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    console.log("Backend response status:", backendRes.status);
+
+    if (!backendRes.ok) {
+      const err = await backendRes.json().catch(() => ({}));
+      console.error("Backend login failed:", err);
+      throw new Error(err.message ?? err.detail ?? "Invalid credentials");
+    }
+
+    const loginData = await backendRes.json();
+
+    console.log("Backend login success:", loginData);
+
+    const { access_token, refresh_token, user } = loginData;
+
+    // Step 2: Create Next.js session
+    const sessionRes = await fetch("/api/auth/session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        access_token,
+        refresh_token,
+        user,
+      }),
+    });
+
+    console.log("Session response status:", sessionRes.status);
+
+    if (!sessionRes.ok) {
+      const errorText = await sessionRes.text();
+      console.error("Session API failed:", errorText);
+      throw new Error("Failed to establish session");
+    }
+
+    const sessionData = await sessionRes.json();
+
+    console.log("Session created:", sessionData);
+
+    const safeUser = sessionData.user;
+
+    // Step 3: Save user in Zustand
+    setUser(safeUser);
+
+    console.log("User saved to Zustand:", safeUser);
+
+    toast.success(
+      `Welcome back, ${safeUser.first_name ?? safeUser.email}!`
+    );
+
+    console.log("Redirecting to dashboard...");
+
+    // Temporary test redirect
+    window.location.href = "/dashboard";
+
+    // Later replace with:
+    // router.push("/dashboard");
+
+  } catch (err: unknown) {
+    console.error("Login error:", err);
+
+    const msg =
+      err instanceof Error ? err.message : "Something went wrong";
+
+    toast.error(msg);
+  }
+}
+>>>>>>> 01191d4 (FIxes Done and testing remaining)
 
   return (
     <div className="rounded-2xl border bg-card shadow-xl shadow-black/5 p-8 space-y-6 fade-in">

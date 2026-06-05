@@ -466,7 +466,11 @@ useEffect(() => {
       try {
         console.log("Fetching batches from:", `${API}/batches/`);
         console.log("Auth headers:", authHeaders());
+<<<<<<< HEAD
         const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
+=======
+        const res = await fetch(`${API}/batches`, { headers: authHeaders() });
+>>>>>>> 01191d4 (FIxes Done and testing remaining)
         console.log("Batches response status:", res.status);
         if (!res.ok) {
           console.error("Batches fetch failed:", res.status, res.statusText);
@@ -492,6 +496,7 @@ async function handleSave(data: AddFormState) {
     console.log("batches in handleSave:", batches);
     console.log("foundBatch:", foundBatch);
 
+<<<<<<< HEAD
     const authRaw     = localStorage.getItem("coachgenie-auth");
     const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
     const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
@@ -501,6 +506,17 @@ async function handleSave(data: AddFormState) {
       toast.error("You must be logged in to create an admission.");
       return;
     }
+=======
+    // const authRaw     = localStorage.getItem("coachgenie-auth");
+    // const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
+    // const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
+    // const tenantId    = authData?.tenantId    ?? useAuthStore.getState().tenantId;
+
+    // if (!accessToken || !tenantId) {
+    //   toast.error("You must be logged in to create an admission.");
+    //   return;
+    // }
+>>>>>>> 01191d4 (FIxes Done and testing remaining)
 
     const totalFee   = parseFloat(data.totalFee) || 0;
     const amountPaid = parseFloat(data.amountPaid) || 0;
@@ -549,6 +565,7 @@ async function handleSave(data: AddFormState) {
       } satisfies AdmissionPayment,
     };
 
+<<<<<<< HEAD
     setSaving(true);
     try {
       const res = await fetch("/api/admissions", {
@@ -572,6 +589,54 @@ async function handleSave(data: AddFormState) {
     } finally {
       setSaving(false);
     }
+=======
+    // setSaving(true);
+    // try {
+    //   const res = await fetch("/api/admissions", {
+    //     method:  "POST",
+    //     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}`, "X-Tenant-Id": tenantId },
+    //     body:    JSON.stringify(payload),
+    //   });
+    //   const json = await res.json();
+    //   if (!res.ok) {
+    //     const message = typeof json?.detail === "string" ? json.detail
+    //       : Array.isArray(json?.detail) ? json.detail.map((e: { msg: string }) => e.msg).join(", ")
+    //       : "Failed to create admission";
+    //     throw new Error(message);
+    //   }
+    //   const created: AdmissionWithPayment = json.data ?? json;
+    //   addAdmission?.(created);
+    //   toast.success("Admission created!");
+    //   setShowForm(false);
+    // } catch (err: unknown) {
+    //   toast.error(err instanceof Error ? err.message : "Something went wrong");
+    // } finally {
+    //   setSaving(false);
+    // }
+    setSaving(true);
+try {
+  const res = await fetch(`${API}/admissions`, {   // ← /api/proxy/admissions
+    method:  "POST",
+    headers: authHeaders(),                         // ← just Content-Type, cookie is automatic
+    body:    JSON.stringify(payload),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    const message = typeof json?.detail === "string" ? json.detail
+      : Array.isArray(json?.detail) ? json.detail.map((e: { msg: string }) => e.msg).join(", ")
+      : "Failed to create admission";
+    throw new Error(message);
+  }
+  const created: AdmissionWithPayment = json.data ?? json;
+  addAdmission?.(created);
+  toast.success("Admission created!");
+  setShowForm(false);
+} catch (err: unknown) {
+  toast.error(err instanceof Error ? err.message : "Something went wrong");
+} finally {
+  setSaving(false);
+}
+>>>>>>> 01191d4 (FIxes Done and testing remaining)
   }
 
   return (
