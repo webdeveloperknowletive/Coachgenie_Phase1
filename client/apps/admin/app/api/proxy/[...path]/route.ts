@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // // app/api/proxy/[...path]/route.ts
 // import { cookies } from "next/headers";
 // import { NextRequest, NextResponse } from "next/server";
@@ -46,9 +46,9 @@
 // export const PATCH  = handler;
 // export const PUT    = handler;
 // export const DELETE = handler;
-=======
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
+
 
 // app/api/proxy/[...path]/route.ts
 import { cookies } from "next/headers";
@@ -69,12 +69,12 @@ async function handler(
 
   const { path } = await params; // ✅ await params in Next.js 15
   const search = request.nextUrl.search;
-<<<<<<< HEAD
+
 //   const url = `${BACKEND}/${path.join("/")}/${search}`;
 const url = `${BACKEND}/${path.join("/")}/${search}`;
-=======
+
   const url = `${BACKEND}/${path.join("/")}${search}`;
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
 
   const headers: HeadersInit = {
     "Content-Type":       "application/json",

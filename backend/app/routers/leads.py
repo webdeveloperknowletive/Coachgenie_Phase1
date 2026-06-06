@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # from datetime import date
 # from fastapi import APIRouter, Depends, Query, HTTPException
 # from pydantic import BaseModel
@@ -231,7 +229,6 @@
 #     activities = await lead_service.get_activities(db, str(tenant.id), lead_id)
 #     return {"success": True, "data": [ActivityOut.model_validate(a) for a in activities]}
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 from datetime import date
 from fastapi import APIRouter, Depends, Query, HTTPException
 from pydantic import BaseModel
@@ -240,10 +237,8 @@ from app.dependencies import get_tenant, require_roles, DB
 from app.schemas.lead import LeadCreate, LeadUpdate, LeadOut, ActivityCreate, ActivityOut
 from app.services import lead as lead_service
 from app.services import admission as admission_service
-<<<<<<< HEAD
-=======
 from app.services.inbox_notification import create_notification
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
 
 router = APIRouter(prefix="/leads", tags=["Leads"])
 
@@ -258,10 +253,6 @@ async def lead_funnel(
     data = await get_funnel(db, str(tenant.id))
     return {"success": True, "data": data}
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 # ── List / CRUD ────────────────────────────────────────────────────────────────
 @router.get("/")
 async def list_leads(
@@ -293,8 +284,7 @@ async def create_lead(
     if data.get("batch_id"):
         data["batch_id"] = str(data["batch_id"])
     lead = await lead_service.create_lead(db, str(tenant.id), data)
-<<<<<<< HEAD
-=======
+
 
     # ── Inbox notification ──────────────────────────────────────────────────
     await create_notification(
@@ -308,7 +298,6 @@ async def create_lead(
     # ───────────────────────────────────────────────────────────────────────
 
     await db.commit()
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     return {"success": True, "data": LeadOut.model_validate(lead)}
 
 
@@ -335,8 +324,7 @@ async def update_lead(
     if data.get("batch_id"):
         data["batch_id"] = str(data["batch_id"])
     lead = await lead_service.update_lead(db, str(tenant.id), lead_id, data)
-<<<<<<< HEAD
-=======
+
 
     # ── Notify on stage change ──────────────────────────────────────────────
     if "status" in data:
@@ -351,7 +339,6 @@ async def update_lead(
     # ───────────────────────────────────────────────────────────────────────
 
     await db.commit()
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     return {"success": True, "data": LeadOut.model_validate(lead)}
 
 
@@ -363,10 +350,8 @@ async def delete_lead(
     current_user=Depends(require_roles("owner")),
 ):
     await lead_service.delete_lead(db, str(tenant.id), lead_id)
-<<<<<<< HEAD
-=======
+
     await db.commit()
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     return {"success": True, "message": "Lead deleted."}
 
 
@@ -387,8 +372,7 @@ async def assign_counselor(
         db, str(tenant.id), lead_id,
         {"assigned_to": body.counselor_id}
     )
-<<<<<<< HEAD
-=======
+
     await create_notification(
         db,
         tenant_id=str(tenant.id),
@@ -398,17 +382,13 @@ async def assign_counselor(
         link=f"/leads/{lead.id}",
         user_id=body.counselor_id,   # notify only the assigned counselor
     )
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     await db.commit()
     return {"success": True, "message": "Counselor assigned.", "data": LeadOut.model_validate(lead)}
 
 
 class ChangeStageBody(BaseModel):
-<<<<<<< HEAD
     stage: str  # new / contacted / interested / converted / lost
-=======
     stage: str
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 
 @router.post("/{lead_id}/change-stage")
 async def change_stage(
@@ -424,8 +404,6 @@ async def change_stage(
     lead = await lead_service.update_lead(
         db, str(tenant.id), lead_id, {"status": body.stage}
     )
-<<<<<<< HEAD
-=======
     await create_notification(
         db,
         tenant_id=str(tenant.id),
@@ -434,7 +412,6 @@ async def change_stage(
         icon="lead",
         link=f"/leads/{lead.id}",
     )
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     await db.commit()
     return {"success": True, "message": f"Stage updated to '{body.stage}'.", "data": LeadOut.model_validate(lead)}
 
@@ -460,8 +437,7 @@ async def schedule_followup(
             db, str(tenant.id), lead_id, str(current_user.id),
             {"type": "follow_up_scheduled", "description": body.notes}
         )
-<<<<<<< HEAD
-=======
+
     await create_notification(
         db,
         tenant_id=str(tenant.id),
@@ -470,7 +446,7 @@ async def schedule_followup(
         icon="lead",
         link=f"/leads/{lead.id}",
     )
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
     await db.commit()
     return {"success": True, "message": "Follow-up scheduled.", "data": LeadOut.model_validate(lead)}
 
@@ -488,7 +464,6 @@ async def convert_lead(
     tenant=Depends(get_tenant),
     current_user=Depends(require_roles("owner", "counselor")),
 ):
-<<<<<<< HEAD
     """
     Single conversion endpoint. Atomically:
       1. Creates admission from lead data
@@ -496,8 +471,7 @@ async def convert_lead(
       3. Generates a student record
       4. Marks lead as converted
     """
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
     try:
         admission, student = await admission_service.convert_lead(
             db,
@@ -506,8 +480,7 @@ async def convert_lead(
             converted_by = str(current_user.id),
             admission_data = {k: v for k, v in body.model_dump().items() if v is not None},
         )
-<<<<<<< HEAD
-=======
+
 
         # ── Inbox notification ──────────────────────────────────────────────
         await create_notification(
@@ -520,23 +493,20 @@ async def convert_lead(
         )
         # ───────────────────────────────────────────────────────────────────
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
         await db.commit()
         return {
             "success": True,
             "message": "Lead converted successfully.",
             "data": {
-<<<<<<< HEAD
                 "admission_id":   str(admission.id),
                 "admission_number": admission.admission_number,
                 "student_id":     str(student.id),
                 "enrollment_no":  student.enrollment_no,
-=======
                 "admission_id":     str(admission.id),
                 "admission_number": admission.admission_number,
                 "student_id":       str(student.id),
                 "enrollment_no":    student.enrollment_no,
->>>>>>> 01191d4 (FIxes Done and testing remaining)
             }
         }
     except Exception as e:
@@ -556,10 +526,7 @@ async def add_activity(
     activity = await lead_service.add_activity(
         db, str(tenant.id), lead_id, str(current_user.id), body.model_dump()
     )
-<<<<<<< HEAD
-=======
     await db.commit()
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     return {"success": True, "data": ActivityOut.model_validate(activity)}
 
 

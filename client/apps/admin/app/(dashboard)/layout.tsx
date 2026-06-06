@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // "use client";
 // import { useEffect } from "react";
 // import { usePathname, useRouter } from "next/navigation";
@@ -57,8 +57,6 @@
 // }
 
 
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 "use client";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";

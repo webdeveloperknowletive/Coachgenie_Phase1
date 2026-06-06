@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // import { create } from "zustand";
 // import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -63,8 +63,8 @@
 // The HttpOnly cookie set by /api/auth/session carries the actual tokens —
 // they are never readable by JavaScript.
 
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
+
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 

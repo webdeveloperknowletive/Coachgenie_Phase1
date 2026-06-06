@@ -466,11 +466,9 @@ useEffect(() => {
       try {
         console.log("Fetching batches from:", `${API}/batches/`);
         console.log("Auth headers:", authHeaders());
-<<<<<<< HEAD
+
         const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
-=======
         const res = await fetch(`${API}/batches`, { headers: authHeaders() });
->>>>>>> 01191d4 (FIxes Done and testing remaining)
         console.log("Batches response status:", res.status);
         if (!res.ok) {
           console.error("Batches fetch failed:", res.status, res.statusText);
@@ -496,7 +494,6 @@ async function handleSave(data: AddFormState) {
     console.log("batches in handleSave:", batches);
     console.log("foundBatch:", foundBatch);
 
-<<<<<<< HEAD
     const authRaw     = localStorage.getItem("coachgenie-auth");
     const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
     const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
@@ -506,7 +503,6 @@ async function handleSave(data: AddFormState) {
       toast.error("You must be logged in to create an admission.");
       return;
     }
-=======
     // const authRaw     = localStorage.getItem("coachgenie-auth");
     // const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
     // const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
@@ -516,7 +512,6 @@ async function handleSave(data: AddFormState) {
     //   toast.error("You must be logged in to create an admission.");
     //   return;
     // }
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 
     const totalFee   = parseFloat(data.totalFee) || 0;
     const amountPaid = parseFloat(data.amountPaid) || 0;
@@ -565,7 +560,6 @@ async function handleSave(data: AddFormState) {
       } satisfies AdmissionPayment,
     };
 
-<<<<<<< HEAD
     setSaving(true);
     try {
       const res = await fetch("/api/admissions", {
@@ -589,7 +583,6 @@ async function handleSave(data: AddFormState) {
     } finally {
       setSaving(false);
     }
-=======
     // setSaving(true);
     // try {
     //   const res = await fetch("/api/admissions", {
@@ -636,7 +629,6 @@ try {
 } finally {
   setSaving(false);
 }
->>>>>>> 01191d4 (FIxes Done and testing remaining)
   }
 
   return (

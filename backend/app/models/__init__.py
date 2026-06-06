@@ -13,11 +13,8 @@ from app.models.notification import NotificationTemplate, NotificationLog
 from app.models.ai import AISession, AIMessage, DashboardSnapshot
 from app.models.otp import OTPCode
 
-<<<<<<< HEAD
-=======
 from app.models.inbox_notification import InboxNotification
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 from app.models.batch import Batch, BatchStudent, Class, Subject       # noqa: F401
  
 # 2. Lead (depends on Tenant, User, Batch)

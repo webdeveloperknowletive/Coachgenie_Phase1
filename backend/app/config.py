@@ -110,12 +110,10 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 
-<<<<<<< HEAD
+
 settings = Settings()
-=======
 settings = Settings()
 # Module-level aliases for direct imports
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.JWT_ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
->>>>>>> 01191d4 (FIxes Done and testing remaining)

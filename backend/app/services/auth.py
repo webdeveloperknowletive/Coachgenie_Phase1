@@ -52,11 +52,8 @@ async def login_user(db: AsyncSession, tenant_id: str, email: str, password: str
 
     payload = {
         "sub": str(user.id),
-<<<<<<< HEAD
         "tenantId": str(user.tenant_id),
-=======
         "tenant_id": str(user.tenant_id),
->>>>>>> 01191d4 (FIxes Done and testing remaining)
         "role": user.role,
         "email": user.email
     }
@@ -104,11 +101,8 @@ async def refresh_tokens(db: AsyncSession, raw_refresh: str) -> dict:
     token.revoked = True
     payload = {
         "sub": str(user.id),
-<<<<<<< HEAD
         "tenantId": str(user.tenant_id),
-=======
         "tenant_id": str(user.tenant_id),
->>>>>>> 01191d4 (FIxes Done and testing remaining)
         "role": user.role,
         "email": user.email
     }

@@ -79,8 +79,6 @@
 # app.include_router(ai_reports_router,    prefix=PREFIX)
 
 
-<<<<<<< HEAD
-=======
 # import logging
 # from contextlib import asynccontextmanager
 # from fastapi import FastAPI, Request
@@ -189,7 +187,6 @@
 # app.include_router(admins.router,        prefix=PREFIX)  # ← add
 
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
@@ -197,16 +194,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
 from app.database import engine
-<<<<<<< HEAD
 from app.scheduler import start_scheduler, scheduler
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 
 import app.models  # noqa: F401
 
 from app.routers import (
     auth, tenants, leads, students, admissions,
-<<<<<<< HEAD
     batches, attendance, exams, fees, notifications, ai,parents, tutors, admins,
 )
 
@@ -219,8 +212,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from app.routers.ai_reports import router as ai_reports_router
-from app.routers import growth_cards, auth_extended, dashboard, syllabus
-=======
+from app.routers import (growth_cards, auth_extended, dashboard, syllabus,
     batches, attendance, exams, fees, notifications, ai,
     parents, tutors, admins,
 )
@@ -231,7 +223,6 @@ from app.routers import inbox_notification         # ← new
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("coaching_erp")
@@ -240,7 +231,6 @@ logger = logging.getLogger("coaching_erp")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME}")
-<<<<<<< HEAD
     start_scheduler()
     yield
     scheduler.shutdown()
@@ -249,8 +239,6 @@ async def lifespan(app: FastAPI):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME}")
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     yield
     await engine.dispose()
 
@@ -259,10 +247,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     version="1.0.0",
     docs_url="/docs",
-<<<<<<< HEAD
-=======
     lifespan=lifespan,
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 )
 
 app.add_middleware(
@@ -277,17 +262,14 @@ app.add_middleware(
 )
 
 limiter = Limiter(key_func=get_remote_address)
-<<<<<<< HEAD
 
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
-=======
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
@@ -307,7 +289,6 @@ async def health():
 
 
 PREFIX = "/api/v1"
-<<<<<<< HEAD
 app.include_router(tenants.router,       prefix=PREFIX)
 app.include_router(auth.router,          prefix=PREFIX)
 app.include_router(leads.router,         prefix=PREFIX)
@@ -327,7 +308,6 @@ app.include_router(syllabus.router,      prefix=PREFIX)
 app.include_router(parents.router,       prefix=PREFIX)  # ← add
 app.include_router(tutors.router,        prefix=PREFIX)  # ← add
 app.include_router(admins.router,        prefix=PREFIX)  # ← add
-=======
 app.include_router(tenants.router,              prefix=PREFIX)
 app.include_router(auth.router,                 prefix=PREFIX)
 app.include_router(leads.router,                prefix=PREFIX)
@@ -348,4 +328,3 @@ app.include_router(parents.router,              prefix=PREFIX)
 app.include_router(tutors.router,               prefix=PREFIX)
 app.include_router(admins.router,               prefix=PREFIX)
 app.include_router(inbox_notification.router,   prefix=PREFIX)
->>>>>>> 01191d4 (FIxes Done and testing remaining)

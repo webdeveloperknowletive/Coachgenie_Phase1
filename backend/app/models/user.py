@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 import uuid
 from sqlalchemy import String, Boolean, ForeignKey, text, UniqueConstraint, Index
-=======
 # import uuid
 # from sqlalchemy import String, Boolean, ForeignKey, text, UniqueConstraint, Index
 # from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -55,7 +53,6 @@ from sqlalchemy import String, Boolean, ForeignKey, text, UniqueConstraint, Inde
 import uuid
 from datetime import datetime, timezone, timedelta
 from sqlalchemy import String, Boolean, ForeignKey, text, UniqueConstraint, Index, Integer
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
 from app.database import Base
@@ -79,20 +76,14 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(20), nullable=True)
     avatar_url: Mapped[str] = mapped_column(String(500), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-<<<<<<< HEAD
-=======
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
->>>>>>> 01191d4 (FIxes Done and testing remaining)
     last_login_at = mapped_column(TIMESTAMP(timezone=True), nullable=True)
     created_at = mapped_column(TIMESTAMP(timezone=True), server_default=text("NOW()"))
     updated_at = mapped_column(TIMESTAMP(timezone=True), server_default=text("NOW()"), onupdate=text("NOW()"))
 
     tenant = relationship("Tenant", back_populates="users")
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
-<<<<<<< HEAD
-=======
     otp_verifications = relationship("OTPVerification", back_populates="user", cascade="all, delete-orphan")
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 
 
 class RefreshToken(Base):
@@ -110,8 +101,6 @@ class RefreshToken(Base):
     created_at = mapped_column(TIMESTAMP(timezone=True), server_default=text("NOW()"))
 
     user = relationship("User", back_populates="refresh_tokens")
-<<<<<<< HEAD
-=======
 
 
 class OTPVerification(Base):
@@ -141,4 +130,3 @@ class OTPVerification(Base):
     @property
     def is_valid(self) -> bool:
         return not self.is_used and not self.is_expired and self.attempts < 5
->>>>>>> 01191d4 (FIxes Done and testing remaining)

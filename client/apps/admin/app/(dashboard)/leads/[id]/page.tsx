@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-=======
+
+
 // "use client";
 // import { use } from "react";
 // import { useRouter } from "next/navigation";
@@ -270,7 +270,7 @@
 // }
 
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
 "use client";
 import { use } from "react";
 import { useRouter } from "next/navigation";
@@ -285,13 +285,13 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import type { ActivityType, LeadStage } from "@/lib/types/lead";
 
-<<<<<<< HEAD
+
 // Add this line after the imports, before the component
 const API = "/api/proxy"
-=======
+
 const API = "/api/proxy";
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -309,18 +309,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     );
   }
 
-<<<<<<< HEAD
+
   // async function handleAddActivity(type: ActivityType, content: string) {
   //   await new Promise((r) => setTimeout(r, 400));
   //   store.addActivity(id, { type, content, createdBy: "Rahul Verma" });
   //   toast.success("Activity logged");
   // }
-=======
+
   function authHeaders(): HeadersInit {
     return { "Content-Type": "application/json" };
   }
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
   async function handleAddActivity(type: ActivityType, content: string) {
     const createdBy = currentUser?.name ?? currentUser?.email ?? "Staff";
     store.addActivity(id, { type, content, createdBy });
@@ -337,7 +337,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     }
   }
 
-<<<<<<< HEAD
+
   function authHeaders(): HeadersInit {
   return { "Content-Type": "application/json" };
 }
@@ -352,7 +352,7 @@ console.log("Lead PATCH status:", patchRes.status);
 const patchJson = await patchRes.json().catch(() => ({}));
 console.log("Lead PATCH response:", JSON.stringify(patchJson));
 
-=======
+
   // async function handleConvert() {
   //   try {
   //     // 1. Create the admission
@@ -424,12 +424,12 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
     console.log("Lead PATCH status:", patchRes.status);
     const patchJson = await patchRes.json().catch(() => ({}));
     console.log("Lead PATCH response:", JSON.stringify(patchJson));
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
 
     store.updateStage(lead.id, "ENROLLED");
     toast.success("Lead converted to admission!");
     router.push(`/admissions/${result.data.id}`);
-<<<<<<< HEAD
+
     } catch (err: any) {
       toast.error(err?.message || "Could not convert lead. Please try again.");
     }
@@ -440,13 +440,13 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
   //   toast.success("Lead deleted");
   //   router.push("/leads");
   // }
-=======
+
   } catch (err: any) {
     toast.error(err?.message || "Could not convert lead. Please try again.");
   }
 }
 
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
   async function handleDelete() {
     try {
       const res = await fetch(`${API}/leads/${lead.id}`, {
@@ -462,11 +462,11 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
     }
   }
 
-<<<<<<< HEAD
+
   // const isEnrolled      = lead.stage === "ENROLLED";
   // const alreadyAdmitted = store.admissions.some((a) => a.leadId === lead.id);
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
+
   const alreadyAdmitted = lead.stage === "ENROLLED" ||
     store.admissions.some(
       (a) => a.leadId === lead.id || (a as any).lead_id === lead.id
@@ -532,11 +532,11 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
             )}
           </div>
 
-<<<<<<< HEAD
+
           {/* ── Academic Details (NEW) ──────────────────────────────── */}
-=======
+
           {/* Academic Details */}
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
           <div className="rounded-xl border bg-card p-5 space-y-3">
             <h3 className="text-sm font-semibold">Academic Details</h3>
             {[
@@ -560,10 +560,10 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
                 </div>
               ) : null
             )}
-<<<<<<< HEAD
+
             {/* show placeholder if all academic fields empty */}
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
+
             {!lead.schoolName && !lead.grade && !lead.standard && !lead.boardName && !lead.subject && !lead.batchName && (
               <p className="text-xs text-muted-foreground">No academic details added.</p>
             )}
@@ -599,10 +599,10 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
                 return (
                   <button
                     key={s}
-<<<<<<< HEAD
+
                     // onClick={() => { store.updateStage(lead.id, s); toast.success(`Stage updated to ${cfg.label}`); }}
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
+
                     onClick={async () => {
                       store.updateStage(lead.id, s);
                       try {

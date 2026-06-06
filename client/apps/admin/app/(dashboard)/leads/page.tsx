@@ -76,11 +76,11 @@ export default function LeadsPage() {
     setLoading(true);
     setFetchError(null);
     try {
-<<<<<<< HEAD
+
       const res = await fetch(`${API}/leads/`, { headers: authHeaders() });
-=======
+
       const res = await fetch(`${API}/leads`, { headers: authHeaders() });
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const json = await res.json();
       const raw: any[] = Array.isArray(json) ? json : (json.data ?? json.items ?? []);
@@ -97,11 +97,11 @@ export default function LeadsPage() {
   const fetchBatches = useCallback(async () => {
     setBatchesLoading(true);
     try {
-<<<<<<< HEAD
+
       const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
-=======
+
       const res = await fetch(`${API}/batches`, { headers: authHeaders() });
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
       if (!res.ok) return;
       const json = await res.json();
       const raw: any[] = Array.isArray(json) ? json : (json.data ?? json.items ?? []);
@@ -126,11 +126,11 @@ export default function LeadsPage() {
   // ── Create ────────────────────────────────────────────────────────────────
   async function handleCreate(data: LeadFormValues) {
     try {
-<<<<<<< HEAD
+
       const res = await fetch(`${API}/leads/`, {
-=======
+
       const res = await fetch(`${API}/leads`, {
->>>>>>> 01191d4 (FIxes Done and testing remaining)
+
         method:  "POST",
         headers: authHeaders(),
         body: JSON.stringify({

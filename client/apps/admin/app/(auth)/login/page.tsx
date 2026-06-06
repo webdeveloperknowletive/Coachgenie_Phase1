@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD
 // "use client";
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";
@@ -145,9 +144,6 @@
 //   );
 // }
 
-=======
->>>>>>> 01191d4 (FIxes Done and testing remaining)
-
 "use client";
 // app/(auth)/login/page.tsx
 // SECURITY FIX:
@@ -181,7 +177,6 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(schema) });
 
-<<<<<<< HEAD
   async function onSubmit(data: LoginInput) {
     try {
       // Step 1 — authenticate against FastAPI backend
@@ -229,7 +224,6 @@ export default function LoginPage() {
       toast.error(msg);
     }
   }
-=======
   // async function onSubmit(data: LoginInput) {
   //   try {
   //     // Step 1 — authenticate against FastAPI backend
@@ -361,7 +355,6 @@ export default function LoginPage() {
     toast.error(msg);
   }
 }
->>>>>>> 01191d4 (FIxes Done and testing remaining)
 
   return (
     <div className="rounded-2xl border bg-card shadow-xl shadow-black/5 p-8 space-y-6 fade-in">
