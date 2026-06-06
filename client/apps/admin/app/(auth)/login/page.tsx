@@ -1,4 +1,5 @@
 
+
 // "use client";
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";
@@ -144,6 +145,8 @@
 //   );
 // }
 
+
+
 "use client";
 // app/(auth)/login/page.tsx
 // SECURITY FIX:
@@ -176,6 +179,7 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(schema) });
+
 
   async function onSubmit(data: LoginInput) {
     try {
@@ -224,6 +228,8 @@ export default function LoginPage() {
       toast.error(msg);
     }
   }
+
+
   // async function onSubmit(data: LoginInput) {
   //   try {
   //     // Step 1 — authenticate against FastAPI backend

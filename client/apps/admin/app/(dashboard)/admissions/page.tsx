@@ -467,7 +467,10 @@ useEffect(() => {
         console.log("Fetching batches from:", `${API}/batches/`);
         console.log("Auth headers:", authHeaders());
 
+
         const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
+
+
         const res = await fetch(`${API}/batches`, { headers: authHeaders() });
         console.log("Batches response status:", res.status);
         if (!res.ok) {
@@ -494,6 +497,7 @@ async function handleSave(data: AddFormState) {
     console.log("batches in handleSave:", batches);
     console.log("foundBatch:", foundBatch);
 
+
     const authRaw     = localStorage.getItem("coachgenie-auth");
     const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
     const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
@@ -503,6 +507,8 @@ async function handleSave(data: AddFormState) {
       toast.error("You must be logged in to create an admission.");
       return;
     }
+
+
     // const authRaw     = localStorage.getItem("coachgenie-auth");
     // const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
     // const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
@@ -560,6 +566,7 @@ async function handleSave(data: AddFormState) {
       } satisfies AdmissionPayment,
     };
 
+
     setSaving(true);
     try {
       const res = await fetch("/api/admissions", {
@@ -583,6 +590,8 @@ async function handleSave(data: AddFormState) {
     } finally {
       setSaving(false);
     }
+
+
     // setSaving(true);
     // try {
     //   const res = await fetch("/api/admissions", {

@@ -1,4 +1,5 @@
 
+
 // // app/api/proxy/[...path]/route.ts
 // import { cookies } from "next/headers";
 // import { NextRequest, NextResponse } from "next/server";
@@ -50,6 +51,8 @@
 
 
 
+
+
 // app/api/proxy/[...path]/route.ts
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -70,8 +73,13 @@ async function handler(
   const { path } = await params; // ✅ await params in Next.js 15
   const search = request.nextUrl.search;
 
+
 //   const url = `${BACKEND}/${path.join("/")}/${search}`;
 const url = `${BACKEND}/${path.join("/")}/${search}`;
+
+  const url = `${BACKEND}/${path.join("/")}${search}`;
+
+
 
   const url = `${BACKEND}/${path.join("/")}${search}`;
 

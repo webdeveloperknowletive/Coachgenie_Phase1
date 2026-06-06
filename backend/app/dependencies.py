@@ -1,3 +1,4 @@
+
 # from fastapi import Depends, Header, Request
 # from sqlalchemy.ext.asyncio import AsyncSession
 # from sqlalchemy import select, and_
@@ -82,6 +83,8 @@
 # CurrentTenant = Annotated[Tenant, Depends(get_tenant)]
 
 
+
+
 from fastapi import Depends, Header, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
@@ -97,8 +100,10 @@ import uuid
 
 async def get_tenant(
     db: AsyncSession = Depends(get_db),
+
     x_tenant_subdomain: str | None = Header(default=None),  # ← matches "X-Tenant-Subdomain"
     x_tenant_id: str | None = Header(default=None),         # ← fallback for old header
+
 ) -> Tenant:
     """
     Accepts X-Tenant-Subdomain (primary) or X-Tenant-Id (fallback).
@@ -111,7 +116,10 @@ async def get_tenant(
     if not raw:
         raise TenantNotFoundError("X-Tenant-Subdomain header is missing")
 
+
     # detect if UUID → query by id, otherwise query by subdomain
+
+
     # detect if UUID ? query by id, otherwise query by subdomain
     try:
         uuid.UUID(raw)
@@ -164,8 +172,11 @@ async def get_current_user(
     token = auth_header.split(" ")[1]
     payload = decode_access_token(token)
 
+
     # ✅ handle both camelCase and snake_case
     tenant_id = payload.get("tenant_id") or payload.get("tenantId")
+
+
 
     result = await db.execute(
         select(User).where(
@@ -193,10 +204,13 @@ def require_roles(*roles: str):
     return checker
 
 
+
 # ── Simple type aliases ───────────────────────────────────────
 DB            = Annotated[AsyncSession, Depends(get_db)]
 CurrentUser   = Annotated[User,         Depends(get_current_user)]
 CurrentTenant = Annotated[Tenant,       Depends(get_tenant)]
+
+
 # -- Simple type aliases ---------------------------------------
 DB            = Annotated[AsyncSession, Depends(get_db)]
 CurrentUser   = Annotated[User,         Depends(get_current_user)]

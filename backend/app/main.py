@@ -194,12 +194,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
 from app.database import engine
+
 from app.scheduler import start_scheduler, scheduler
+
+
 
 import app.models  # noqa: F401
 
 from app.routers import (
     auth, tenants, leads, students, admissions,
+
     batches, attendance, exams, fees, notifications, ai,parents, tutors, admins,
 )
 
@@ -213,6 +217,8 @@ from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from app.routers.ai_reports import router as ai_reports_router
 from app.routers import (growth_cards, auth_extended, dashboard, syllabus,
+
+
     batches, attendance, exams, fees, notifications, ai,
     parents, tutors, admins,
 )
@@ -231,6 +237,7 @@ logger = logging.getLogger("coaching_erp")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME}")
+
     start_scheduler()
     yield
     scheduler.shutdown()
@@ -239,6 +246,8 @@ async def lifespan(app: FastAPI):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME}")
+
+
     yield
     await engine.dispose()
 
@@ -263,8 +272,11 @@ app.add_middleware(
 
 limiter = Limiter(key_func=get_remote_address)
 
+
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
+
+
 
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
@@ -289,6 +301,7 @@ async def health():
 
 
 PREFIX = "/api/v1"
+
 app.include_router(tenants.router,       prefix=PREFIX)
 app.include_router(auth.router,          prefix=PREFIX)
 app.include_router(leads.router,         prefix=PREFIX)
@@ -308,6 +321,8 @@ app.include_router(syllabus.router,      prefix=PREFIX)
 app.include_router(parents.router,       prefix=PREFIX)  # ← add
 app.include_router(tutors.router,        prefix=PREFIX)  # ← add
 app.include_router(admins.router,        prefix=PREFIX)  # ← add
+
+
 app.include_router(tenants.router,              prefix=PREFIX)
 app.include_router(auth.router,                 prefix=PREFIX)
 app.include_router(leads.router,                prefix=PREFIX)
@@ -327,4 +342,8 @@ app.include_router(syllabus.router,             prefix=PREFIX)
 app.include_router(parents.router,              prefix=PREFIX)
 app.include_router(tutors.router,               prefix=PREFIX)
 app.include_router(admins.router,               prefix=PREFIX)
+
 app.include_router(inbox_notification.router,   prefix=PREFIX)
+
+app.include_router(inbox_notification.router,   prefix=PREFIX)
+

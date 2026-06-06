@@ -77,7 +77,11 @@ export default function LeadsPage() {
     setFetchError(null);
     try {
 
+
       const res = await fetch(`${API}/leads/`, { headers: authHeaders() });
+
+      const res = await fetch(`${API}/leads`, { headers: authHeaders() });
+
 
       const res = await fetch(`${API}/leads`, { headers: authHeaders() });
 
@@ -98,7 +102,11 @@ export default function LeadsPage() {
     setBatchesLoading(true);
     try {
 
+
       const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
+
+      const res = await fetch(`${API}/batches`, { headers: authHeaders() });
+
 
       const res = await fetch(`${API}/batches`, { headers: authHeaders() });
 
@@ -127,7 +135,11 @@ export default function LeadsPage() {
   async function handleCreate(data: LeadFormValues) {
     try {
 
+
       const res = await fetch(`${API}/leads/`, {
+
+      const res = await fetch(`${API}/leads`, {
+
 
       const res = await fetch(`${API}/leads`, {
 

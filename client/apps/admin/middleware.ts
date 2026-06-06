@@ -1,4 +1,5 @@
 
+
 // // apps/admin/middleware.ts
 // import { NextResponse } from "next/server";
 // import type { NextRequest } from "next/server";
@@ -36,6 +37,8 @@
 //   AFTER:  verifies JWT signature + expiry using jose jwtVerify before allowing access
 //           expired token → redirect to /login (not silent pass-through)
 //           missing NEXTAUTH_SECRET → fail closed (deny all protected routes)
+
+
 
 
 
@@ -123,8 +126,12 @@ export async function middleware(request: NextRequest) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-user-id",   payload.sub);
 
+
     // requestHeaders.set("x-tenant-id", payload.tenant_id);
     requestHeaders.set("x-tenant-id", payload.tenant_id ?? (payload as any).tenantId);
+
+    requestHeaders.set("x-tenant-id", payload.tenant_id);
+
 
     requestHeaders.set("x-tenant-id", payload.tenant_id);
 
@@ -138,7 +145,11 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|icons|images).*)"],
 
+
 };
+
+};
+
 
 };
 

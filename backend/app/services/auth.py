@@ -52,7 +52,10 @@ async def login_user(db: AsyncSession, tenant_id: str, email: str, password: str
 
     payload = {
         "sub": str(user.id),
+
         "tenantId": str(user.tenant_id),
+
+
         "tenant_id": str(user.tenant_id),
         "role": user.role,
         "email": user.email
@@ -101,7 +104,10 @@ async def refresh_tokens(db: AsyncSession, raw_refresh: str) -> dict:
     token.revoked = True
     payload = {
         "sub": str(user.id),
+
         "tenantId": str(user.tenant_id),
+
+
         "tenant_id": str(user.tenant_id),
         "role": user.role,
         "email": user.email

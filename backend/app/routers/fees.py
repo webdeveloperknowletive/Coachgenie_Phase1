@@ -9,6 +9,9 @@ from app.models.student import Student
 router = APIRouter(prefix="/fees", tags=["Fees"])
 
 
+
+
+
 @router.get("/invoices/{invoice_id}")
 async def get_invoice(
     invoice_id: str,
@@ -20,6 +23,9 @@ async def get_invoice(
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
     return {"success": True, "data": FeeInvoiceOut.model_validate(invoice)}
+
+
+
 
 
 @router.get("/monthly-trend")

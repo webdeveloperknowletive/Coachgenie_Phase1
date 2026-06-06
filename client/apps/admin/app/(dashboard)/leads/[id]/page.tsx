@@ -1,5 +1,8 @@
 
 
+
+
+
 // "use client";
 // import { use } from "react";
 // import { useRouter } from "next/navigation";
@@ -271,6 +274,9 @@
 
 
 
+
+
+
 "use client";
 import { use } from "react";
 import { useRouter } from "next/navigation";
@@ -286,8 +292,13 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import type { ActivityType, LeadStage } from "@/lib/types/lead";
 
 
+
 // Add this line after the imports, before the component
 const API = "/api/proxy"
+
+const API = "/api/proxy";
+
+
 
 const API = "/api/proxy";
 
@@ -310,15 +321,21 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   }
 
 
+
   // async function handleAddActivity(type: ActivityType, content: string) {
   //   await new Promise((r) => setTimeout(r, 400));
   //   store.addActivity(id, { type, content, createdBy: "Rahul Verma" });
   //   toast.success("Activity logged");
   // }
 
+
+
   function authHeaders(): HeadersInit {
     return { "Content-Type": "application/json" };
   }
+
+
+
 
 
   async function handleAddActivity(type: ActivityType, content: string) {
@@ -338,6 +355,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   }
 
 
+
   function authHeaders(): HeadersInit {
   return { "Content-Type": "application/json" };
 }
@@ -351,6 +369,8 @@ const patchRes = await fetch(`${API}/leads/${lead.id}`, {
 console.log("Lead PATCH status:", patchRes.status);
 const patchJson = await patchRes.json().catch(() => ({}));
 console.log("Lead PATCH response:", JSON.stringify(patchJson));
+
+
 
 
   // async function handleConvert() {
@@ -426,6 +446,7 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
     console.log("Lead PATCH response:", JSON.stringify(patchJson));
 
 
+
     store.updateStage(lead.id, "ENROLLED");
     toast.success("Lead converted to admission!");
     router.push(`/admissions/${result.data.id}`);
@@ -441,10 +462,18 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
   //   router.push("/leads");
   // }
 
+
+    store.updateStage(lead.id, "ENROLLED");
+    toast.success("Lead converted to admission!");
+    router.push(`/admissions/${result.data.id}`);
+
   } catch (err: any) {
     toast.error(err?.message || "Could not convert lead. Please try again.");
   }
 }
+
+
+
 
 
   async function handleDelete() {
@@ -463,8 +492,11 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
   }
 
 
+
   // const isEnrolled      = lead.stage === "ENROLLED";
   // const alreadyAdmitted = store.admissions.some((a) => a.leadId === lead.id);
+
+
 
 
   const alreadyAdmitted = lead.stage === "ENROLLED" ||
@@ -533,7 +565,11 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
           </div>
 
 
+
           {/* ── Academic Details (NEW) ──────────────────────────────── */}
+
+          {/* Academic Details */}
+
 
           {/* Academic Details */}
 
@@ -561,7 +597,10 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
               ) : null
             )}
 
+
             {/* show placeholder if all academic fields empty */}
+
+
 
 
             {!lead.schoolName && !lead.grade && !lead.standard && !lead.boardName && !lead.subject && !lead.batchName && (
@@ -600,7 +639,10 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
                   <button
                     key={s}
 
+
                     // onClick={() => { store.updateStage(lead.id, s); toast.success(`Stage updated to ${cfg.label}`); }}
+
+
 
 
                     onClick={async () => {

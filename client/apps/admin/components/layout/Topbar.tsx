@@ -1,10 +1,13 @@
 
+
 "use client";
 
 import { useRouter } from "next/navigation";
 import { Bell, Search, Sun, Moon, LogOut, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
+
+
 
 // "use client";
 
@@ -312,9 +315,15 @@ import { useRouter } from "next/navigation";
 import { Bell, Search, LogOut, User, X, Users, GraduationCap, BookOpen, Receipt, ArrowRight, Loader2 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 
+
+
+
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { api } from "@/lib/api";
+
+
+
 
 
 
@@ -353,11 +362,15 @@ const TYPE_CONFIG = {
 };
 
 
+
+
+
 interface TopbarProps {
   sidebarCollapsed: boolean;
 }
 
 export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
+
 
   const { theme, setTheme } = useTheme();
   const router = useRouter();
@@ -372,6 +385,8 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
         await api.post("/auth/logout", {
           refresh_token: refreshToken,
         });
+
+
 
   const router = useRouter();
 
@@ -456,10 +471,14 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
       if (refreshToken) {
         await api.post("/auth/logout", { refresh_token: refreshToken });
 
+
+
+
       }
     } catch (err) {
       console.error("Logout API failed:", err);
     }
+
 
 
     // Clear local auth state
@@ -514,6 +533,8 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
             className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
           >
             RV
+
+
 
     clear();
     document.cookie = "cg_access_token=; path=/; max-age=0";
@@ -836,10 +857,14 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
           >
             {initials}
 
+
+
+
           </button>
 
           {menuOpen && (
             <>
+
 
               {/* Overlay */}
               <div
@@ -861,6 +886,8 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
                 </button>
 
 
+
+
               <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
               <div
                 className="absolute right-0 top-10 z-40 w-48 rounded-xl border border-border shadow-xl overflow-hidden"
@@ -878,6 +905,9 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
                   <User className="h-3.5 w-3.5" /> Profile
                 </button>
 
+
+
+
                 <button
                   onClick={handleLogout}
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
@@ -888,6 +918,9 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
             </>
           )}
         </div>
+
+
+
 
 
 
