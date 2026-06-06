@@ -1,3 +1,8 @@
+
+import uuid
+from sqlalchemy import String, Boolean, ForeignKey, text, UniqueConstraint, Index
+
+
 # import uuid
 # from sqlalchemy import String, Boolean, ForeignKey, text, UniqueConstraint, Index
 # from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -127,4 +132,8 @@ class OTPVerification(Base):
 
     @property
     def is_valid(self) -> bool:
+
         return not self.is_used and not self.is_expired and self.attempts < 5
+
+        return not self.is_used and not self.is_expired and self.attempts < 5
+

@@ -96,11 +96,21 @@ export const authService = {
       tenant_id: (data.user as any).tenant_id ?? "demo",
     });
 
+
+    // also set cookie for middleware
+    document.cookie = `cg_access_token=${data.access_token}; path=/; max-age=900; SameSite=Lax`;
+
+
     return data;
   },
 
   async logout() {
     try { await api.post("/auth/logout"); } catch {}
+
+    useAuthStore.getState().clear();
+    document.cookie = "cg_access_token=; path=/; max-age=0";
+
+
     // Clears httpOnly cookies server-side
     await fetch("/api/auth/session", { method: "DELETE" });
     useAuthStore.getState().clear();
@@ -126,4 +136,9 @@ export const authService = {
   async changePassword(current_password: string, new_password: string) {
     return api.post("/auth/change-password", { current_password, new_password });
   },
+
 };
+};
+
+};
+

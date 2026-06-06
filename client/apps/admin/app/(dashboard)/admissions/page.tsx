@@ -466,6 +466,11 @@ useEffect(() => {
       try {
         console.log("Fetching batches from:", `${API}/batches/`);
         console.log("Auth headers:", authHeaders());
+
+
+        const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
+
+
         const res = await fetch(`${API}/batches`, { headers: authHeaders() });
         console.log("Batches response status:", res.status);
         if (!res.ok) {
@@ -491,6 +496,18 @@ async function handleSave(data: AddFormState) {
     const foundBatch = batches.find(b => b.name === data.batchName);
     console.log("batches in handleSave:", batches);
     console.log("foundBatch:", foundBatch);
+
+
+    const authRaw     = localStorage.getItem("coachgenie-auth");
+    const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
+    const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
+    const tenantId    = authData?.tenantId    ?? useAuthStore.getState().tenantId;
+
+    if (!accessToken || !tenantId) {
+      toast.error("You must be logged in to create an admission.");
+      return;
+    }
+
 
     // const authRaw     = localStorage.getItem("coachgenie-auth");
     // const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
@@ -548,6 +565,32 @@ async function handleSave(data: AddFormState) {
         notes:                data.notes,
       } satisfies AdmissionPayment,
     };
+
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admissions", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}`, "X-Tenant-Id": tenantId },
+        body:    JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        const message = typeof json?.detail === "string" ? json.detail
+          : Array.isArray(json?.detail) ? json.detail.map((e: { msg: string }) => e.msg).join(", ")
+          : "Failed to create admission";
+        throw new Error(message);
+      }
+      const created: AdmissionWithPayment = json.data ?? json;
+      addAdmission?.(created);
+      toast.success("Admission created!");
+      setShowForm(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
+
 
     // setSaving(true);
     // try {

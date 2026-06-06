@@ -80,6 +80,10 @@ const PAYMENT_STATUS_CONFIG: Record<PaymentStatus, { label: string; className: s
   PENDING: { label: "Pending",        className: "bg-red-100 text-red-700"        },
 };
 
+
+
+
+
 const API = "/api/proxy";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -159,6 +163,10 @@ function EditPaymentModal({ payment, onClose, onSave }: EditPaymentModalProps) {
           <div className="grid grid-cols-3 gap-4">
             <Field label="Total Fee (₹)"><input type="number" min="0" value={totalFee} onChange={e => setTotalFee(e.target.value)} className={inputCls()} /></Field>
             <Field label="Amount Paid (₹)"><input type="number" min="0" value={amountPaid} onChange={e => setAmountPaid(e.target.value)} className={inputCls()} /></Field>
+
+            <Field label="Remaining (₹)"><div className={cn(inputCls(), "bg-muted text-muted-foreground select-none")}>{remaining > 0 ? fmt(remaining) : "—"}</div></Field>
+
+
             {/* <Field label="Remaining (₹)"><div className={cn(inputCls(), "bg-muted text-muted-foreground select-none")}>{remaining > 0 ? fmt(remaining) : "—"}</div></Field> */}
             <Field label="Remaining (₹)">
   <div className={cn(inputCls(), "bg-muted text-muted-foreground select-none")}>
@@ -226,6 +234,11 @@ export default function AdmissionDetailPage({ params }: { params: Promise<{ id: 
   const fetchAdmission = useCallback(async () => {
     setLoading(true);
     try {
+
+
+      const res  = await fetch(`/api/admissions/${id}`, { headers: authHeaders(), cache: "no-store" });
+
+
       const res  = await fetch(`${API}/admissions/${id}`, { headers: authHeaders(), cache: "no-store" });
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const json = await res.json();
@@ -242,7 +255,15 @@ export default function AdmissionDetailPage({ params }: { params: Promise<{ id: 
   async function patchAdmission(patch: Record<string, any>) {
     setSaving(true);
     try {
+
+
+      const res = await fetch(`/api/admissions/${id}`, {
+
       const res = await fetch(`${API}/admissions/${id}`, {
+
+
+      const res = await fetch(`${API}/admissions/${id}`, {
+
         method: "PATCH", headers: authHeaders(), body: JSON.stringify(patch),
       });
       if (!res.ok) {

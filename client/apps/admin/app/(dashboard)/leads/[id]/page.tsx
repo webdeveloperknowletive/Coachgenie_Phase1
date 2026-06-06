@@ -1,3 +1,8 @@
+
+
+
+
+
 // "use client";
 // import { use } from "react";
 // import { useRouter } from "next/navigation";
@@ -268,6 +273,10 @@
 // }
 
 
+
+
+
+
 "use client";
 import { use } from "react";
 import { useRouter } from "next/navigation";
@@ -282,7 +291,17 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import type { ActivityType, LeadStage } from "@/lib/types/lead";
 
+
+
+// Add this line after the imports, before the component
+const API = "/api/proxy"
+
 const API = "/api/proxy";
+
+
+
+const API = "/api/proxy";
+
 
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -301,9 +320,23 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     );
   }
 
+
+
+  // async function handleAddActivity(type: ActivityType, content: string) {
+  //   await new Promise((r) => setTimeout(r, 400));
+  //   store.addActivity(id, { type, content, createdBy: "Rahul Verma" });
+  //   toast.success("Activity logged");
+  // }
+
+
+
   function authHeaders(): HeadersInit {
     return { "Content-Type": "application/json" };
   }
+
+
+
+
 
   async function handleAddActivity(type: ActivityType, content: string) {
     const createdBy = currentUser?.name ?? currentUser?.email ?? "Staff";
@@ -320,6 +353,25 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       toast.error("Failed to save activity");
     }
   }
+
+
+
+  function authHeaders(): HeadersInit {
+  return { "Content-Type": "application/json" };
+}
+
+
+const patchRes = await fetch(`${API}/leads/${lead.id}`, {
+  method:  "PATCH",
+  headers: authHeaders(),
+  body:    JSON.stringify({ status: "enrolled" }),
+});
+console.log("Lead PATCH status:", patchRes.status);
+const patchJson = await patchRes.json().catch(() => ({}));
+console.log("Lead PATCH response:", JSON.stringify(patchJson));
+
+
+
 
   // async function handleConvert() {
   //   try {
@@ -393,13 +445,36 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     const patchJson = await patchRes.json().catch(() => ({}));
     console.log("Lead PATCH response:", JSON.stringify(patchJson));
 
+
+
     store.updateStage(lead.id, "ENROLLED");
     toast.success("Lead converted to admission!");
     router.push(`/admissions/${result.data.id}`);
+
+    } catch (err: any) {
+      toast.error(err?.message || "Could not convert lead. Please try again.");
+    }
+  }
+
+  // function handleDelete() {
+  //   store.deleteLead(id);
+  //   toast.success("Lead deleted");
+  //   router.push("/leads");
+  // }
+
+
+    store.updateStage(lead.id, "ENROLLED");
+    toast.success("Lead converted to admission!");
+    router.push(`/admissions/${result.data.id}`);
+
   } catch (err: any) {
     toast.error(err?.message || "Could not convert lead. Please try again.");
   }
 }
+
+
+
+
 
   async function handleDelete() {
     try {
@@ -415,6 +490,14 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       toast.error("Failed to delete lead");
     }
   }
+
+
+
+  // const isEnrolled      = lead.stage === "ENROLLED";
+  // const alreadyAdmitted = store.admissions.some((a) => a.leadId === lead.id);
+
+
+
 
   const alreadyAdmitted = lead.stage === "ENROLLED" ||
     store.admissions.some(
@@ -481,7 +564,15 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             )}
           </div>
 
+
+
+          {/* ── Academic Details (NEW) ──────────────────────────────── */}
+
           {/* Academic Details */}
+
+
+          {/* Academic Details */}
+
           <div className="rounded-xl border bg-card p-5 space-y-3">
             <h3 className="text-sm font-semibold">Academic Details</h3>
             {[
@@ -505,6 +596,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 </div>
               ) : null
             )}
+
+
+            {/* show placeholder if all academic fields empty */}
+
+
+
+
             {!lead.schoolName && !lead.grade && !lead.standard && !lead.boardName && !lead.subject && !lead.batchName && (
               <p className="text-xs text-muted-foreground">No academic details added.</p>
             )}
@@ -540,6 +638,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 return (
                   <button
                     key={s}
+
+
+                    // onClick={() => { store.updateStage(lead.id, s); toast.success(`Stage updated to ${cfg.label}`); }}
+
+
+
+
                     onClick={async () => {
                       store.updateStage(lead.id, s);
                       try {

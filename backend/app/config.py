@@ -110,6 +110,8 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 
+
+settings = Settings()
 settings = Settings()
 # Module-level aliases for direct imports
 SECRET_KEY = settings.SECRET_KEY

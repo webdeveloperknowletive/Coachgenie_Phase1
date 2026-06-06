@@ -1,5 +1,29 @@
 // "use client";
 // import { use, useState, useEffect } from "react";
+
+// import Link from "next/link";
+// import { ArrowLeft, CheckCircle2, Circle, Plus, X } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { toast } from "sonner";
+
+// const API = "/api/proxy"
+
+
+
+
+const API = "/api/proxy"
+
+interface Topic {
+  id: string;
+  title: string;
+  subject?: string;
+  description?: string;
+  order: number;
+  completed: boolean;
+  completed_at?: string | null;
+  notes?: string | null;
+
+
 // import { useRouter } from "next/navigation";
 // import { toast } from "sonner";
 // import {
@@ -291,6 +315,19 @@ interface Topic {
 
 export default function SyllabusPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+
+  const router = useRouter();
+
+  const [topics, setTopics]       = useState<Topic[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [batchName, setBatchName] = useState("");
+  const [showForm, setShowForm]   = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({ title: "", subject: "", description: "" });
+
+  // fetch batch name + syllabus
+
+
   const router  = useRouter();
 
   const [topics,      setTopics]      = useState<Topic[]>([]);
@@ -305,16 +342,30 @@ export default function SyllabusPage({ params }: { params: Promise<{ id: string 
       setLoading(true);
       try {
         const [bRes, sRes] = await Promise.all([
+
+          fetch(`${API}/batches/${id}`, { headers: authHeaders() }),
+
+
           fetch(`${API}/batches/${id}`,  { headers: authHeaders() }),
           fetch(`${API}/syllabus/${id}`, { headers: authHeaders() }),
         ]);
         if (bRes.ok) {
           const bJson = await bRes.json();
+
+          const b = bJson.data ?? bJson;
+
+
           const b     = bJson.data ?? bJson;
           setBatchName(b.name ?? "");
         }
         if (sRes.ok) {
           const sJson = await sRes.json();
+
+          setTopics(sJson.data ?? []);
+        }
+      } catch (err: any) {
+
+
           setTopics(Array.isArray(sJson.data) ? sJson.data : (Array.isArray(sJson) ? sJson : []));
         }
       } catch {
@@ -332,6 +383,21 @@ export default function SyllabusPage({ params }: { params: Promise<{ id: string 
     setSubmitting(true);
     try {
       const res = await fetch(`${API}/syllabus/${id}`, {
+
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          title: form.title.trim(),
+          subject: form.subject.trim() || null,
+          description: form.description.trim() || null,
+          order: topics.length,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to add topic");
+      const json = await res.json();
+      setTopics(prev => [...prev, json.data]);
+
+
         method:  "POST",
         headers: authHeaders(),
         body:    JSON.stringify({
@@ -352,6 +418,11 @@ export default function SyllabusPage({ params }: { params: Promise<{ id: string 
       setShowForm(false);
       toast.success("Topic added");
     } catch (err: any) {
+
+      toast.error(err.message);
+
+
+
       toast.error(err.message ?? "Failed to add topic");
     } finally {
       setSubmitting(false);
@@ -360,6 +431,20 @@ export default function SyllabusPage({ params }: { params: Promise<{ id: string 
 
   async function handleToggle(topic: Topic) {
     const newVal = !topic.completed;
+
+    // optimistic update
+    setTopics(prev => prev.map(t => t.id === topic.id ? { ...t, completed: newVal } : t));
+    try {
+      const res = await fetch(`${API}/syllabus/${id}/${topic.id}/toggle`, {
+        method: "PATCH",
+        headers: authHeaders(),
+        body: JSON.stringify({ completed: newVal }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+    } catch {
+      // revert
+
+
     setTopics(prev => prev.map(t => t.id === topic.id ? { ...t, completed: newVal } : t));
     try {
       const res = await fetch(`${API}/syllabus/${id}/${topic.id}/toggle`, {
@@ -378,6 +463,13 @@ export default function SyllabusPage({ params }: { params: Promise<{ id: string 
     setTopics(prev => prev.filter(t => t.id !== topicId));
     try {
       const res = await fetch(`${API}/syllabus/${id}/${topicId}`, {
+
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+
+
         method:  "DELETE",
         headers: authHeaders(),
       });
@@ -410,6 +502,10 @@ export default function SyllabusPage({ params }: { params: Promise<{ id: string 
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
+
+            <h1 className="text-xl font-bold">— Syllabus</h1>
+
+
             <h1 className="text-xl font-bold">{batchName ? `${batchName} Syllabus` : "Syllabus"}</h1>
             <p className="text-xs text-muted-foreground">{completed}/{topics.length} topics completed</p>
           </div>

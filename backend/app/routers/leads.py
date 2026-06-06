@@ -239,6 +239,10 @@ from app.services import lead as lead_service
 from app.services import admission as admission_service
 from app.services.inbox_notification import create_notification
 
+
+
+
+
 router = APIRouter(prefix="/leads", tags=["Leads"])
 
 
@@ -251,6 +255,9 @@ async def lead_funnel(
     from app.services.lead import get_funnel
     data = await get_funnel(db, str(tenant.id))
     return {"success": True, "data": data}
+
+
+
 
 
 # ── List / CRUD ────────────────────────────────────────────────────────────────
@@ -284,6 +291,10 @@ async def create_lead(
     if data.get("batch_id"):
         data["batch_id"] = str(data["batch_id"])
     lead = await lead_service.create_lead(db, str(tenant.id), data)
+
+
+
+
 
     # ── Inbox notification ──────────────────────────────────────────────────
     await create_notification(
@@ -324,6 +335,10 @@ async def update_lead(
         data["batch_id"] = str(data["batch_id"])
     lead = await lead_service.update_lead(db, str(tenant.id), lead_id, data)
 
+
+
+
+
     # ── Notify on stage change ──────────────────────────────────────────────
     if "status" in data:
         await create_notification(
@@ -348,6 +363,10 @@ async def delete_lead(
     current_user=Depends(require_roles("owner")),
 ):
     await lead_service.delete_lead(db, str(tenant.id), lead_id)
+
+
+
+
     await db.commit()
     return {"success": True, "message": "Lead deleted."}
 
@@ -369,6 +388,10 @@ async def assign_counselor(
         db, str(tenant.id), lead_id,
         {"assigned_to": body.counselor_id}
     )
+
+
+
+
     await create_notification(
         db,
         tenant_id=str(tenant.id),
@@ -383,6 +406,10 @@ async def assign_counselor(
 
 
 class ChangeStageBody(BaseModel):
+
+    stage: str  # new / contacted / interested / converted / lost
+
+
     stage: str
 
 @router.post("/{lead_id}/change-stage")
@@ -432,6 +459,10 @@ async def schedule_followup(
             db, str(tenant.id), lead_id, str(current_user.id),
             {"type": "follow_up_scheduled", "description": body.notes}
         )
+
+
+
+
     await create_notification(
         db,
         tenant_id=str(tenant.id),
@@ -440,6 +471,10 @@ async def schedule_followup(
         icon="lead",
         link=f"/leads/{lead.id}",
     )
+
+
+
+
     await db.commit()
     return {"success": True, "message": "Follow-up scheduled.", "data": LeadOut.model_validate(lead)}
 
@@ -457,6 +492,17 @@ async def convert_lead(
     tenant=Depends(get_tenant),
     current_user=Depends(require_roles("owner", "counselor")),
 ):
+
+    """
+    Single conversion endpoint. Atomically:
+      1. Creates admission from lead data
+      2. Auto-approves it
+      3. Generates a student record
+      4. Marks lead as converted
+    """
+
+
+
     try:
         admission, student = await admission_service.convert_lead(
             db,
@@ -465,6 +511,10 @@ async def convert_lead(
             converted_by = str(current_user.id),
             admission_data = {k: v for k, v in body.model_dump().items() if v is not None},
         )
+
+
+
+
 
         # ── Inbox notification ──────────────────────────────────────────────
         await create_notification(
@@ -477,11 +527,22 @@ async def convert_lead(
         )
         # ───────────────────────────────────────────────────────────────────
 
+
+
+
+
         await db.commit()
         return {
             "success": True,
             "message": "Lead converted successfully.",
             "data": {
+
+                "admission_id":   str(admission.id),
+                "admission_number": admission.admission_number,
+                "student_id":     str(student.id),
+                "enrollment_no":  student.enrollment_no,
+
+
                 "admission_id":     str(admission.id),
                 "admission_number": admission.admission_number,
                 "student_id":       str(student.id),
