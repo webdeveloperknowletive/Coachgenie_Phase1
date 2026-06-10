@@ -7,7 +7,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   Lead,
   LeadStage,
-  Activity,
+  LeadActivity,
   Admission,
 } from "@/lib/types/lead";
 
@@ -27,7 +27,7 @@ interface LeadStore {
   // ACTIVITIES
   addActivity: (
     leadId: string,
-    act: Omit<Activity, "id" | "createdAt">
+    act: Omit<LeadActivity, "id" | "createdAt">
   ) => void;
 
   // ADMISSIONS
@@ -88,7 +88,7 @@ export const useLeadStore = create<LeadStore>()(
           lead.stage = stage;
           lead.updatedAt = new Date().toISOString();
 
-          lead.activities.unshift({
+          (lead.activities as any[]).unshift({
             id: `a-${Date.now()}`,
             type: "STAGE_CHANGE",
             content: `Stage changed to ${stage.replace(
@@ -121,7 +121,7 @@ export const useLeadStore = create<LeadStore>()(
 
           if (!lead) return;
 
-          lead.activities.unshift({
+          (lead.activities as any[]).unshift({
             ...act,
             id: `a-${Date.now()}`,
             createdAt: new Date().toISOString(),

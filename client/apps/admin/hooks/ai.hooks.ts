@@ -27,7 +27,7 @@
 //   reportUrl?: string;
 // };
 
-// const { accessToken, user } = useAuthStore();
+// const { user } = useAuthStore();
 
 // export function useCoachGenieChat({
 //   context,
@@ -44,7 +44,7 @@
 //   const abortRef = useRef<AbortController | null>(null);
 
 //   if (!accessToken || !user?.id) {
-//   console.warn("No auth token — cannot send AI request.");
+//   console.warn("No auth token � cannot send AI request.");
 //   return;
 // }
 
@@ -234,7 +234,7 @@ export function useCoachGenieChat({
   apiEndpoint = "/api/ai/chat",
 }: UseCoachGenieChatProps = {}) {
   const { consent } = useAiStore();
-  const { accessToken, user } = useAuthStore(); // ✅ inside the hook
+  const { user } = useAuthStore(); // ? inside the hook
 
   const [messages, setMessages] = useState<CoachGenieMessage[]>([]);
   const [input, setInput] = useState("");
@@ -266,14 +266,12 @@ export function useCoachGenieChat({
       // console.log("user =", user);
 
       // if (!accessToken || !user?.id) {
-      //   console.warn("No auth token — cannot send AI request.");
+      //   console.warn("No auth token � cannot send AI request.");
       //   return;
       // }
 
-      const token = accessToken || localStorage.getItem("token");
-
-      if (!token || !user?.id) {
-        console.warn("No auth token — cannot send AI request.");
+      if (!user?.id) {
+        console.warn("No user � cannot send AI request.");
         return;
       }
 
@@ -288,10 +286,8 @@ export function useCoachGenieChat({
 
         const response = await fetch(apiEndpoint, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ user_id: user.id, message, context }),
           signal: abortRef.current.signal,
         });
@@ -333,7 +329,7 @@ export function useCoachGenieChat({
         setIsLoading(false);
       }
     },
-    [apiEndpoint, context, consent, accessToken, user]
+    [apiEndpoint, context, consent, user]
   );
 
   const handleInputChange = useCallback(
@@ -359,5 +355,9 @@ export function useCoachGenieChat({
     setIsLoading(false);
   }, []);
 
-  return { messages, input, isLoading, sendMessage, handleInputChange, handleSubmit, stop, setMessages };
+  const append = async (msg: { role: "user" | "assistant"; content: string }) => {
+    await sendMessage(msg.content);
+  };
+
+  return { messages, input, isLoading, sendMessage, handleInputChange, handleSubmit, stop, setMessages, append };
 }

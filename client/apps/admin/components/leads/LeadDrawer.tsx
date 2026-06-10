@@ -30,7 +30,7 @@ export function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
           <div>
             <h2 className="text-lg font-semibold">{lead.name}</h2>
             <p className="text-sm text-muted-foreground">
-              {[lead.grade, lead.subject].filter(Boolean).join(" · ")}
+              {[lead.grade, lead.subject].filter(Boolean).join(" � ")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
             </div>
           </div>
 
-          {/* ── Contact Info ─────────────────────────────────────────────── */}
+          {/* -- Contact Info ----------------------------------------------- */}
           <Section title="Contact">
             <div className="grid grid-cols-2 gap-3">
               <InfoCard icon={Mail}          label="Email"          value={lead.email} />
@@ -86,7 +86,7 @@ export function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
             </div>
           </Section>
 
-          {/* ── Academic Info (NEW) ───────────────────────────────────────── */}
+          {/* -- Academic Info (NEW) ----------------------------------------- */}
           {/* <Section title="Academic Details">
             <div className="grid grid-cols-2 gap-3">
               <InfoCard icon={GraduationCap} label="Grade"          value={lead.grade} />
@@ -113,7 +113,7 @@ export function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
               />
             </div>
             {(() => {
-              const subjects = (lead.subjects ?? []).filter((s: string) => s && s !== "N/A");
+              const subjects = (Array.isArray(lead.subject) ? lead.subject : [lead.subject]).filter((s: string) => s && s !== "N/A");
               return subjects.length > 0 ? (
                 <div className="mt-3">
                   <p className="text-xs text-muted-foreground mb-1.5">Subjects</p>
@@ -170,7 +170,7 @@ export function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
           )}
 
           <div className="text-xs text-muted-foreground">
-            Added {format(new Date(lead.createdAt), "dd MMM yyyy")} · Updated {format(new Date(lead.updatedAt), "dd MMM yyyy")}
+            Added {format(new Date(lead.createdAt), "dd MMM yyyy")} � Updated {format(new Date(lead.updatedAt), "dd MMM yyyy")}
           </div>
         </div>
 
@@ -188,7 +188,7 @@ export function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
   );
 }
 
-// ── helpers ───────────────────────────────────────────────────────────────────
+// -- helpers -------------------------------------------------------------------
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -216,7 +216,7 @@ function InfoCard({
         <Icon className="h-3.5 w-3.5 text-muted-foreground" />
         <span className="text-xs text-muted-foreground">{label}</span>
       </div>
-      <p className="text-sm font-medium truncate">{value || "—"}</p>
+      <p className="text-sm font-medium truncate">{value || "�"}</p>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-﻿// module.exports = {
+// module.exports = {
 //   reactStrictMode: false,
 //   transpilePackages: [
 //     "@coachgenie/api-client",

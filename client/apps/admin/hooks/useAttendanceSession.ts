@@ -10,7 +10,7 @@ interface AttendanceEntry {
 
 export function useAttendanceSession(studentIds: string[]) {
   const [entries, setEntries] = useState<Record<string, AttendanceEntry>>(() =>
-    Object.fromEntries(studentIds.map(id => [id, { studentId: id, status: "present" }]))
+    Object.fromEntries(studentIds.map(id => [id, { studentId: id, status: "PRESENT" as AttendanceStatus }]))
   );
   const [saved, setSaved]   = useState(false);
   const [saving, setSaving] = useState(false);

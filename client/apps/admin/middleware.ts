@@ -148,8 +148,5 @@ export const config = {
 
 };
 
-};
 
-
-};
 

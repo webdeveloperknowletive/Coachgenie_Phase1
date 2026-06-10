@@ -37,7 +37,7 @@ import type {
 //   },
 // ];
 
-// const SEED_INVOICES: Invoice[] = [
+// const []: Invoice[] = [
 //   {
 //     id: "inv-001", invoiceNo: "INV-2024-001", studentId: "s-001",
 //     studentName: "Aarav Sharma", grade: "10th",
@@ -181,7 +181,7 @@ interface FinanceStore {
 
 // export const useFinanceStore = create<FinanceStore>()(
 //   immer((set) => ({
-//     invoices:      SEED_INVOICES,
+//     invoices:      [],
 //     feeStructures: SEED_FEE_STRUCTURES,
 //     notifications: SEED_NOTIFICATIONS,
 //     templates:     SEED_TEMPLATES,
@@ -195,7 +195,7 @@ export const useFinanceStore = create<FinanceStore>()(
     users:         [],
 
     addInvoice: (data) => {
-      const count = SEED_INVOICES.length + 1;
+      const count = [].length + 1;
       const inv: Invoice = {
         ...data,
         id:        `inv-${Date.now()}`,

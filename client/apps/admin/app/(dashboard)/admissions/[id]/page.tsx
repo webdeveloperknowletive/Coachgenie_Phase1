@@ -11,17 +11,17 @@ import { cn } from "@/lib/utils";
 import type { Admission } from "@/lib/types/lead";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-export type PaymentMode   = "upi" | "cash" | "bank" | "other";
-export type PaymentStatus = "PENDING" | "PARTIAL" | "FULL";
+ type PaymentMode   = "upi" | "cash" | "bank" | "other";
+ type PaymentStatus = "PENDING" | "PARTIAL" | "FULL";
 
-export interface InstallmentSchedule {
+ interface InstallmentSchedule {
   number:  number;
   amount:  number;
   dueDate: string;
   paid:    boolean;
 }
 
-export interface AdmissionPayment {
+ interface AdmissionPayment {
   totalFee:             number;
   amountPaid:           number;
   remaining:            number;
@@ -35,7 +35,7 @@ export interface AdmissionPayment {
   notes:                string;
 }
 
-export type AdmissionDetail = Admission & {
+ type AdmissionDetail = Admission & {
   student_name?:   string;
   fee_amount?:     number;
   fee_paid?:       number;
@@ -120,6 +120,7 @@ function authHeaders(): HeadersInit {
 }
 
 
+interface EditPaymentModalProps { payment: AdmissionPayment; onClose: () => void; onSave: (p: AdmissionPayment) => void; }
 function EditPaymentModal({ payment, onClose, onSave }: EditPaymentModalProps) {
   const [totalFee,   setTotalFee]   = useState(String(payment.totalFee));
   const [amountPaid, setAmountPaid] = useState(String(payment.amountPaid));
@@ -234,11 +235,6 @@ export default function AdmissionDetailPage({ params }: { params: Promise<{ id: 
   const fetchAdmission = useCallback(async () => {
     setLoading(true);
     try {
-
-
-      const res  = await fetch(`/api/admissions/${id}`, { headers: authHeaders(), cache: "no-store" });
-
-
       const res  = await fetch(`${API}/admissions/${id}`, { headers: authHeaders(), cache: "no-store" });
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const json = await res.json();
@@ -255,11 +251,6 @@ export default function AdmissionDetailPage({ params }: { params: Promise<{ id: 
   async function patchAdmission(patch: Record<string, any>) {
     setSaving(true);
     try {
-
-
-      const res = await fetch(`/api/admissions/${id}`, {
-
-      const res = await fetch(`${API}/admissions/${id}`, {
 
 
       const res = await fetch(`${API}/admissions/${id}`, {

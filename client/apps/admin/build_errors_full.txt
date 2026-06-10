@@ -1,0 +1,25 @@
+﻿
+> admin@0.1.0 build D:\working\Coachgenie_Phase1-main\client\apps\admin
+> next build
+
+  Γû▓ Next.js 15.0.0
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe : 
+At C:\Users\Admin\AppData\Roaming\npm\pnpm.ps1:24 char:5
++     & "node$exe"  "$basedir/node_modules/pnpm/bin/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Failed to compile.
+
+./lib/types/lead.ts
+24:27  Error: Parsing error: ')' expected.
+
+info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/basic-features/eslint#disabling-rules
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 1.

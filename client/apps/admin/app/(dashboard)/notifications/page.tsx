@@ -94,7 +94,7 @@ export default function NotificationsPage() {
   function fetchLogs() {
     setLoading(true);
     return api.get("/notifications/logs")
-      .then(res => setLogs(res.data ?? []))
+      .then((res: any) => setLogs(res.data ?? []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }

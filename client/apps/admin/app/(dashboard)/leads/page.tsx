@@ -47,12 +47,12 @@ function mapLead(raw: any): Lead {
     boardName:           raw.board_name            ?? "",
     batchId:             raw.batch_id              ?? "",
     batchName:           raw.batch_name            ?? raw.batch?.name   ?? "",
-    subjects:            raw.subjects              ?? [],   // ← added
+    assignedTo:          raw.assigned_to           ?? "",
   };
 }
 
 /** Batch shape used in dropdown */
-export interface Batch {
+ export interface Batch {
   id:   string;
   name: string;
   subjects: string[];
@@ -78,9 +78,6 @@ export default function LeadsPage() {
     try {
 
 
-      const res = await fetch(`${API}/leads/`, { headers: authHeaders() });
-
-      const res = await fetch(`${API}/leads`, { headers: authHeaders() });
 
 
       const res = await fetch(`${API}/leads`, { headers: authHeaders() });
@@ -101,11 +98,6 @@ export default function LeadsPage() {
   const fetchBatches = useCallback(async () => {
     setBatchesLoading(true);
     try {
-
-
-      const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
-
-      const res = await fetch(`${API}/batches`, { headers: authHeaders() });
 
 
       const res = await fetch(`${API}/batches`, { headers: authHeaders() });
@@ -134,11 +126,6 @@ export default function LeadsPage() {
   // ── Create ────────────────────────────────────────────────────────────────
   async function handleCreate(data: LeadFormValues) {
     try {
-
-
-      const res = await fetch(`${API}/leads/`, {
-
-      const res = await fetch(`${API}/leads`, {
 
 
       const res = await fetch(`${API}/leads`, {
@@ -360,3 +347,4 @@ export default function LeadsPage() {
     </div>
   );
 }
+

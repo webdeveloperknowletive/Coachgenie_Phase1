@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send, Users, CheckCircle, Loader2, Clock } from "lucide-react";
+import { ArrowLeft, Send, Users, CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
@@ -32,20 +32,14 @@ const ROLE_CONFIG: Record<Role, { label: string; color: string; bg: string }> = 
   admin:   { label: "Admin",   color: "#791F1F", bg: "#FCEBEB" },
 };
 
-const CHANNEL_ICONS: Record<string, string> = {
-  email: "📧", whatsapp: "💬", sms: "📱",
-};
-
 const inputCls =
   "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
-// Auto-extract {{variable}} tokens
 function extractVars(body: string): string[] {
   const matches = body.match(/\{\{(\w+)\}\}/g) ?? [];
   return [...new Set(matches.map(m => m.replace(/\{\{|\}\}/g, "")))];
 }
 
-// Resolve body with variables for preview
 function resolveBody(body: string, vars: Record<string, string>): string {
   return Object.entries(vars).reduce(
     (b, [k, v]) => b.replace(new RegExp(`\\{\\{${k}\\}\\}`, "g"), v || `{{${k}}}`),
@@ -66,21 +60,17 @@ export default function SendNotificationPage() {
   const [variables,        setVariables]        = useState<Record<string, string>>({});
   const [roleFilter,       setRoleFilter]       = useState<Role | "all">("all");
   const [search,           setSearch]           = useState("");
-  const [scheduleAt,       setScheduleAt]       = useState("");
   const [result,           setResult]           = useState<{ sent: number; failed: number } | null>(null);
 
   useEffect(() => {
     async function load() {
-      // Safe fetch — returns [] if endpoint doesn't exist yet (404) or fails
       async function safeFetch(url: string): Promise<any[]> {
         try {
-          const res = await api.get(url);
+          const res = await api.get(url) as any;
           return res.data?.data?.items ?? res.data?.data ?? res.data ?? [];
         } catch (err: any) {
           const status = err?.response?.status;
-          // Silently ignore expected "not built yet" errors
           if (status === 404 || status === 422 || status === 405) return [];
-          // Only log truly unexpected failures
           if (status !== 401 && status !== 403) {
             console.warn(`[notifications] ${url} unavailable (${status ?? "network"})`);
           }
@@ -89,7 +79,7 @@ export default function SendNotificationPage() {
       }
 
       const toRecipient = (s: any, role: Role): Recipient => ({
-        id: String(s.id),
+        id:    String(s.id),
         name:  `${s.first_name ?? s.name ?? ""} ${s.last_name ?? ""}`.trim() || "Unknown",
         email: s.email ?? "",
         phone: s.phone ?? s.mobile ?? "",
@@ -97,25 +87,21 @@ export default function SendNotificationPage() {
       });
 
       try {
-        // Templates must succeed — everything else is best-effort
-        const tRes = await api.get("/notifications/templates");
+        const tRes = await api.get("/notifications/templates") as any;
         setTemplates(tRes.data ?? []);
       } catch (err) {
         console.error("Failed to load templates:", err);
         toast.error("Failed to load templates");
       }
 
-      // Load each role independently so one missing endpoint doesn't block others
       const [rawStudents, rawParents, rawTutors, rawAdmins] = await Promise.all([
         safeFetch("/students/"),
         safeFetch("/parents/"),
         safeFetch("/tutors/"),
         safeFetch("/users/?role=admin").then(r =>
-          // fallback: try alternate admin endpoint patterns your API may use
           r.length > 0 ? r : safeFetch("/admins/")
         ),
       ]);
-      console.log("RAW STUDENT:", JSON.stringify(rawStudents[0]));
 
       const all: Recipient[] = [
         ...rawStudents.map((s: any) => toRecipient(s, "student")),
@@ -142,7 +128,7 @@ export default function SendNotificationPage() {
   function toggleRecipient(id: string) {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) { next.delete(id); } else { next.add(id); }
       return next;
     });
   }
@@ -180,15 +166,14 @@ export default function SendNotificationPage() {
       const res = await api.post("/notifications/send", {
         template_id: selectedTemplate.id,
         recipients: Array.from(selectedIds).map(id => {
-            const r = recipients.find(r => r.id === id)!;
-            return { id: r.id, email: r.email, phone: r.phone };
+          const r = recipients.find(r => r.id === id)!;
+          return { id: r.id, email: r.email, phone: r.phone };
         }),
         variables,
-        });
+      }) as any;
       setResult({ sent: res.data.sent ?? 0, failed: res.data.failed ?? 0 });
-      toast.success(scheduleAt ? "Notification scheduled!" : `Sent to ${res.data.sent} recipients!`);
+      toast.success(`Sent to ${res.data.sent} recipients!`);
       setSelectedIds(new Set());
-      setScheduleAt("");
     } catch (err: any) {
       toast.error(err.response?.data?.detail ?? "Failed to send");
     } finally {
@@ -208,8 +193,6 @@ export default function SendNotificationPage() {
 
   return (
     <div className="space-y-5 max-w-2xl">
-
-      {/* Header */}
       <div className="flex items-center gap-3">
         <button onClick={() => router.push("/notifications")}
           className="rounded-lg p-2 hover:bg-accent text-muted-foreground transition-colors">
@@ -221,35 +204,30 @@ export default function SendNotificationPage() {
         </div>
       </div>
 
-      {/* Success banner */}
       {result && (
         <div className="rounded-xl border bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 p-4 flex items-center gap-3">
           <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
           <div>
             <p className="text-sm font-medium text-emerald-700">
-              {scheduleAt
-                ? "Notification scheduled successfully"
-                : `Sent to ${result.sent} recipient${result.sent !== 1 ? "s" : ""}`}
-              {result.failed > 0 && ` · ${result.failed} failed`}
+              {`Sent to ${result.sent} recipient${result.sent !== 1 ? "s" : ""}`}
+              {result.failed > 0 && ` � ${result.failed} failed`}
             </p>
             <button onClick={() => router.push("/notifications")}
               className="text-xs text-emerald-600 hover:underline mt-0.5">
-              View notification log →
+              View notification log ?
             </button>
           </div>
         </div>
       )}
 
       <form onSubmit={handleSend} className="space-y-5">
-
-        {/* Step 1: Template */}
         <div className="rounded-xl border bg-card p-5 space-y-3">
           <p className="text-sm font-semibold">1. Select template</p>
           {templates.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No templates yet.{" "}
               <button type="button" onClick={() => router.push("/notifications/templates")}
-                className="text-primary hover:underline">Create one first →</button>
+                className="text-primary hover:underline">Create one first ?</button>
             </p>
           ) : (
             <div className="space-y-2">
@@ -257,9 +235,7 @@ export default function SendNotificationPage() {
                 <button key={t.id} type="button" onClick={() => handleTemplateSelect(t.id)}
                   className={cn(
                     "w-full text-left rounded-lg border p-3 transition-colors",
-                    selectedTemplate?.id === t.id
-                      ? "border-primary bg-primary/5"
-                      : "hover:bg-muted/50"
+                    selectedTemplate?.id === t.id ? "border-primary bg-primary/5" : "hover:bg-muted/50"
                   )}>
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium">{t.name}</p>
@@ -274,7 +250,6 @@ export default function SendNotificationPage() {
           )}
         </div>
 
-        {/* Step 2: Fill variables */}
         {selectedTemplate && templateVars.length > 0 && (
           <div className="rounded-xl border bg-card p-5 space-y-3">
             <p className="text-sm font-semibold">2. Fill variables</p>
@@ -288,7 +263,6 @@ export default function SendNotificationPage() {
                 </div>
               ))}
             </div>
-            {/* Live preview */}
             <div className="rounded-lg bg-muted/50 border p-3">
               <p className="text-xs font-medium text-muted-foreground mb-1">Preview</p>
               <p className="text-sm leading-relaxed">
@@ -298,7 +272,6 @@ export default function SendNotificationPage() {
           </div>
         )}
 
-        {/* Step 3: Recipients */}
         <div className="rounded-xl border bg-card p-5 space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <p className="text-sm font-semibold flex items-center gap-1.5">
@@ -318,7 +291,6 @@ export default function SendNotificationPage() {
             </div>
           </div>
 
-          {/* Role filter tabs */}
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => setRoleFilter("all")}
               className={cn(
@@ -339,11 +311,9 @@ export default function SendNotificationPage() {
             ))}
           </div>
 
-          {/* Search */}
           <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search by name, email or phone…" className={inputCls} />
+            placeholder="Search by name, email or phone�" className={inputCls} />
 
-          {/* Recipient list */}
           <div className="space-y-1.5 max-h-64 overflow-y-auto">
             {visibleRecipients.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-6">No recipients found</p>
@@ -373,15 +343,12 @@ export default function SendNotificationPage() {
           </div>
         </div>
 
-       
-
-        {/* Send button */}
         <button type="submit"
           disabled={sending || !selectedTemplate || selectedIds.size === 0}
           className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60 transition-colors">
           {sending ? (
-            <><Loader2 className="h-4 w-4 animate-spin" /> Sending…</>
-          )  : (
+            <><Loader2 className="h-4 w-4 animate-spin" /> Sending�</>
+          ) : (
             <><Send className="h-4 w-4" /> Send to {selectedIds.size} recipient{selectedIds.size !== 1 ? "s" : ""}</>
           )}
         </button>
@@ -389,3 +356,4 @@ export default function SendNotificationPage() {
     </div>
   );
 }
+

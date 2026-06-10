@@ -265,3 +265,4 @@ export function CreateInvoiceDialog({ onClose, onCreated }: CreateInvoiceDialogP
     </>
   );
 }
+

@@ -18,20 +18,43 @@
 // export const authService = {
 //   async login(email: string, password: string): Promise<LoginResponse> {
 //     const data = await api.post<LoginResponse>("/auth/login", { email, password });
+
+//     // Hand tokens to the Next.js session route → sets httpOnly cookies for middleware
+//     await fetch("/api/auth/session", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         access_token:  data.access_token,
+//         refresh_token: data.refresh_token,
+//         user:          data.user,
+//       }),
+//     });
+
+//     // Store non-sensitive user info in Zustand (no tokens)
 //     const { setAuth } = useAuthStore.getState();
 //     setAuth(data.access_token, data.refresh_token, {
 //       ...(data.user as any),
 //       tenant_id: (data.user as any).tenant_id ?? "demo",
 //     });
+
+
 //     // also set cookie for middleware
 //     document.cookie = `cg_access_token=${data.access_token}; path=/; max-age=900; SameSite=Lax`;
+
+
 //     return data;
 //   },
 
 //   async logout() {
 //     try { await api.post("/auth/logout"); } catch {}
+
 //     useAuthStore.getState().clear();
 //     document.cookie = "cg_access_token=; path=/; max-age=0";
+
+
+//     // Clears httpOnly cookies server-side
+//     await fetch("/api/auth/session", { method: "DELETE" });
+//     useAuthStore.getState().clear();
 //     window.location.href = "/login";
 //   },
 
@@ -54,8 +77,8 @@
 //   async changePassword(current_password: string, new_password: string) {
 //     return api.post("/auth/change-password", { current_password, new_password });
 //   },
-// };
 
+// };
 
 // apps/admin/src/services/authService.ts
 import { api } from "@/lib/api";
@@ -66,11 +89,11 @@ export interface LoginResponse {
   refresh_token: string;
   token_type:    string;
   user: {
-    id: string;
-    email: string;
-    role: string;
+    id:         string;
+    email:      string;
+    role:       string;
     first_name: string;
-    last_name: string;
+    last_name:  string;
   };
 }
 
@@ -80,7 +103,7 @@ export const authService = {
 
     // Hand tokens to the Next.js session route → sets httpOnly cookies for middleware
     await fetch("/api/auth/session", {
-      method: "POST",
+      method:  "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         access_token:  data.access_token,
@@ -96,10 +119,8 @@ export const authService = {
       tenant_id: (data.user as any).tenant_id ?? "demo",
     });
 
-
     // also set cookie for middleware
     document.cookie = `cg_access_token=${data.access_token}; path=/; max-age=900; SameSite=Lax`;
-
 
     return data;
   },
@@ -107,13 +128,10 @@ export const authService = {
   async logout() {
     try { await api.post("/auth/logout"); } catch {}
 
-    useAuthStore.getState().clear();
-    document.cookie = "cg_access_token=; path=/; max-age=0";
-
-
     // Clears httpOnly cookies server-side
     await fetch("/api/auth/session", { method: "DELETE" });
     useAuthStore.getState().clear();
+    document.cookie = "cg_access_token=; path=/; max-age=0";
     window.location.href = "/login";
   },
 
@@ -136,9 +154,6 @@ export const authService = {
   async changePassword(current_password: string, new_password: string) {
     return api.post("/auth/change-password", { current_password, new_password });
   },
-
-};
 };
 
-};
 

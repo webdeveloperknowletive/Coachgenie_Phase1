@@ -7,6 +7,12 @@ import { cn } from "@/lib/utils";
 import { useAcademicStore } from "@/lib/stores/academic.store";
 import type { Batch } from "@/lib/types/academic";
 
+async function parseErrorDetail(res: Response): Promise<string> {
+  const text = await res.text();
+  try { return JSON.parse(text)?.detail ?? text; } catch { return text; }
+}
+
+
 // ── API helpers ────────────────────────────────────────────────
 const API = "/api/proxy"
 
@@ -649,3 +655,4 @@ export default function BatchesPage() {
     </div>
   );
 }
+

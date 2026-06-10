@@ -29,7 +29,7 @@ export function AnalyticsChatBubble() {
 
   return (
     <div className="rounded-2xl border bg-card shadow-sm overflow-hidden fade-in">
-      {/* Header — always visible */}
+      {/* Header � always visible */}
       <button
         onClick={() => setOpen(v => !v)}
         className="flex w-full items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
@@ -90,3 +90,4 @@ export function AnalyticsChatBubble() {
     </div>
   );
 }
+

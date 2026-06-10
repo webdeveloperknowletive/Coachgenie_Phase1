@@ -83,6 +83,8 @@ export interface AuthUser {
 }
 
 interface AuthState {
+  accessToken:  string | null;
+  refreshToken: string | null;
   // Display-only state — safe to persist in localStorage
   user:     AuthUser | null;
   tenantId: string | null;
@@ -90,15 +92,20 @@ interface AuthState {
 
   // Actions
   setUser:  (user: AuthUser) => void;
+  setAuth:  (access: string, refresh: string, user: AuthUser) => void;
   clear:    () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
+      accessToken:  null,
+      refreshToken: null,
       user:     null,
       tenantId: null,
       role:     null,
+
+      setAuth: (access, refresh, user) => set({ accessToken: access, refreshToken: refresh, user, tenantId: user.tenant_id, role: user.role }),
 
       setUser: (user) =>
         set({
@@ -109,6 +116,8 @@ export const useAuthStore = create<AuthState>()(
 
       clear: () =>
         set({
+          accessToken:  null,
+          refreshToken: null,
           user:     null,
           tenantId: null,
           role:     null,

@@ -44,7 +44,7 @@
 //     <div className="rounded-xl border bg-card p-5 shadow-sm fade-in col-span-full" style={{ animationDelay: "240ms" }}>
 //       <div className="mb-4">
 //         <h3 className="font-semibold">Attendance Heatmap</h3>
-//         <p className="text-xs text-muted-foreground">Last 6 months · darker = more sessions attended</p>
+//         <p className="text-xs text-muted-foreground">Last 6 months � darker = more sessions attended</p>
 //       </div>
 //       <div className="overflow-x-auto">
 //         <div className="inline-flex flex-col gap-1 min-w-max">
@@ -115,9 +115,9 @@ export function AttendanceHeatmap() {
 
   useEffect(() => {
     api.get("/attendance/heatmap")
-      // .then((res) => setAttendance(res.data.data))
-      .then((res) => setAttendance(res.data || {}))
-      .catch(console.error);
+      // .then((res: any) => setAttendance(res.data.data))
+      .then((res: any) => setAttendance(res.data || {}))
+      .catch((err: unknown) => console.error(err));
   }, []);
 
   const days = eachDayOfInterval({ start: subDays(new Date(), 180), end: new Date() });
@@ -142,7 +142,7 @@ export function AttendanceHeatmap() {
     <div className="rounded-xl border bg-card p-5 shadow-sm fade-in col-span-full" style={{ animationDelay: "240ms" }}>
       <div className="mb-4">
         <h3 className="font-semibold">Attendance Heatmap</h3>
-        <p className="text-xs text-muted-foreground">Last 6 months · darker = more sessions attended</p>
+        <p className="text-xs text-muted-foreground">Last 6 months � darker = more sessions attended</p>
       </div>
       <div className="overflow-x-auto">
         <div className="inline-flex flex-col gap-1 min-w-max">

@@ -1,0 +1,36 @@
+﻿
+> admin@0.1.0 build D:\working\Coachgenie_Phase1-main\client\apps\admin
+> next build
+
+  Γû▓ Next.js 15.0.0
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe : Failed to compile.
+At C:\Users\Admin\AppData\Roaming\npm\pnpm.ps1:24 char:5
++     & "node$exe"  "$basedir/node_modules/pnpm/bin/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Failed to compile.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+./app/(dashboard)/leads/[id]/page.tsx:340:44
+Type error: Object literal may only specify known properties, and 'createdBy' does not exist 
+in type 'Omit<LeadActivity, "id" | "createdAt">'.
+
+[0m [90m 338 |[39m   [36masync[39m [36mfunction[39m handleAddActivity(type[33m:[39m 
+[33mActivityType[39m[33m,[39m content[33m:[39m string) {[0m
+[0m [90m 339 |[39m     [36mconst[39m createdBy [33m=[39m 
+(currentUser[33m?[39m[33m.[39mfirst_name [33m?[39m[33m?[39m 
+currentUser[33m?[39m[33m.[39mlast_name) [33m?[39m[33m?[39m 
+currentUser[33m?[39m[33m.[39memail [33m?[39m[33m?[39m [32m"Staff"[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 340 |[39m     store[33m.[39maddActivity(id[33m,[39m { 
+type[33m,[39m content[33m,[39m createdBy })[33m;[39m[0m
+[0m [90m     |[39m                                            [31m[1m^[22m[39m[0m
+[0m [90m 341 |[39m     [36mtry[39m {[0m
+[0m [90m 342 |[39m       [36mconst[39m res [33m=[39m [36mawait[39m 
+fetch([32m`${API}/leads/${lead!.id}/activities`[39m[33m,[39m {[0m
+[0m [90m 343 |[39m         method[33m:[39m  [32m"POST"[39m[33m,[39m[0m
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 1.

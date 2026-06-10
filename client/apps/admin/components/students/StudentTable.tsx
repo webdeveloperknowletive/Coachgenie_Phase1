@@ -266,3 +266,4 @@ export function StudentTable({ students, onDelete, onEdit }: StudentTableProps) 
     </div>
   );
 }
+

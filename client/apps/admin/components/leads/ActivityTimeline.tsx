@@ -58,7 +58,7 @@ export function ActivityTimeline({ activities, onAdd }: ActivityTimelineProps) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={2}
-          placeholder={`Add a ${TYPE_CONFIG[type].label.toLowerCase()}…`}
+          placeholder={`Add a ${TYPE_CONFIG[type].label.toLowerCase()}�`}
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
         />
         <div className="flex justify-end">
@@ -76,7 +76,7 @@ export function ActivityTimeline({ activities, onAdd }: ActivityTimelineProps) {
       {/* Timeline */}
       <div className="relative space-y-4 pl-6 before:absolute before:left-[0.6rem] before:top-2 before:bottom-2 before:w-px before:bg-border">
         {activities.map((act) => {
-          const cfg = TYPE_CONFIG[act.type];
+          const cfg = TYPE_CONFIG[act.type as ActivityType] ?? TYPE_CONFIG["NOTE"];
           return (
             <div key={act.id} className="relative">
               <div className={cn("absolute -left-6 flex h-5 w-5 items-center justify-center rounded-full ring-2 ring-background", cfg.color)}>

@@ -12,17 +12,17 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import type { Admission } from "@/lib/types/lead";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
-export type PaymentMode   = "upi" | "cash" | "bank" | "other";
-export type PaymentStatus = "PENDING" | "PARTIAL" | "FULL";
+ type PaymentMode   = "upi" | "cash" | "bank" | "other";
+ type PaymentStatus = "PENDING" | "PARTIAL" | "FULL";
 
-export interface InstallmentSchedule {
+ interface InstallmentSchedule {
   number:  number;
   amount:  number;
   dueDate: string;
   paid:    boolean;
 }
 
-export interface AdmissionPayment {
+ interface AdmissionPayment {
   totalFee:             number;
   amountPaid:           number;
   remaining:            number;
@@ -36,7 +36,7 @@ export interface AdmissionPayment {
   notes:                string;
 }
 
-export type AdmissionWithPayment = Admission & {
+type AdmissionWithPayment = Admission & {
   payment?: AdmissionPayment;
 };
 
@@ -52,7 +52,7 @@ const STATUS_CONFIG: Record<
   CANCELLED:      { label: "Cancelled",      color: "text-red-600",     bg: "bg-red-50",     border: "border-red-200",     icon: XCircle     },
 };
 
-export const REQUIRED_DOCUMENTS = [
+ const REQUIRED_DOCUMENTS = [
   { id: "aadhar",    label: "Aadhar Card",         required: true  },
   { id: "marksheet", label: "Previous Marksheet",  required: true  },
   { id: "photo",     label: "Passport Photo",       required: true  },
@@ -468,9 +468,6 @@ useEffect(() => {
         console.log("Auth headers:", authHeaders());
 
 
-        const res = await fetch(`${API}/batches/`, { headers: authHeaders() });
-
-
         const res = await fetch(`${API}/batches`, { headers: authHeaders() });
         console.log("Batches response status:", res.status);
         if (!res.ok) {
@@ -498,17 +495,6 @@ async function handleSave(data: AddFormState) {
     console.log("foundBatch:", foundBatch);
 
 
-    const authRaw     = localStorage.getItem("coachgenie-auth");
-    const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
-    const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
-    const tenantId    = authData?.tenantId    ?? useAuthStore.getState().tenantId;
-
-    if (!accessToken || !tenantId) {
-      toast.error("You must be logged in to create an admission.");
-      return;
-    }
-
-
     // const authRaw     = localStorage.getItem("coachgenie-auth");
     // const authData    = authRaw ? JSON.parse(authRaw)?.state : null;
     // const accessToken = authData?.accessToken ?? useAuthStore.getState().accessToken;
@@ -518,6 +504,14 @@ async function handleSave(data: AddFormState) {
     //   toast.error("You must be logged in to create an admission.");
     //   return;
     // }
+
+      const tenantId = useAuthStore.getState().tenantId;
+
+    if (!tenantId) {
+      toast.error("Tenant information is missing.");
+      return;
+    }
+   
 
     const totalFee   = parseFloat(data.totalFee) || 0;
     const amountPaid = parseFloat(data.amountPaid) || 0;
@@ -567,54 +561,9 @@ async function handleSave(data: AddFormState) {
     };
 
 
-    setSaving(true);
-    try {
-      const res = await fetch("/api/admissions", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}`, "X-Tenant-Id": tenantId },
-        body:    JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        const message = typeof json?.detail === "string" ? json.detail
-          : Array.isArray(json?.detail) ? json.detail.map((e: { msg: string }) => e.msg).join(", ")
-          : "Failed to create admission";
-        throw new Error(message);
-      }
-      const created: AdmissionWithPayment = json.data ?? json;
-      addAdmission?.(created);
-      toast.success("Admission created!");
-      setShowForm(false);
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setSaving(false);
-    }
 
 
-    // setSaving(true);
-    // try {
-    //   const res = await fetch("/api/admissions", {
-    //     method:  "POST",
-    //     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}`, "X-Tenant-Id": tenantId },
-    //     body:    JSON.stringify(payload),
-    //   });
-    //   const json = await res.json();
-    //   if (!res.ok) {
-    //     const message = typeof json?.detail === "string" ? json.detail
-    //       : Array.isArray(json?.detail) ? json.detail.map((e: { msg: string }) => e.msg).join(", ")
-    //       : "Failed to create admission";
-    //     throw new Error(message);
-    //   }
-    //   const created: AdmissionWithPayment = json.data ?? json;
-    //   addAdmission?.(created);
-    //   toast.success("Admission created!");
-    //   setShowForm(false);
-    // } catch (err: unknown) {
-    //   toast.error(err instanceof Error ? err.message : "Something went wrong");
-    // } finally {
-    //   setSaving(false);
-    // }
+    
     setSaving(true);
 try {
   const res = await fetch(`${API}/admissions`, {   // ← /api/proxy/admissions
@@ -689,16 +638,11 @@ try {
               <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full", cfg.bg)}>
                 <StatusIcon className={cn("h-5 w-5", cfg.color)} />
               </div>
-              {/* <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">{adm.studentName ?? adm.student_name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {[ (adm as any).board_name, (adm.subjects ?? []).join(", ")]
-                    .filter(Boolean).join(" · ")}
-                  {adm.payment?.hasInstallments && ` · ${adm.payment.numberOfInstallments} installments`}
-                </p>
-              </div> */}
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">{adm.studentName ?? adm.student_name}</p>
+                {/* <p className="font-semibold text-sm truncate">{adm.studentName ?? adm.student_name}</p> */}
+                                <p className="font-semibold text-sm truncate">
+                  {adm.studentName}
+                </p>
                 <p className="text-xs text-muted-foreground">
                   {[
                     (adm as any).board_name,
@@ -711,7 +655,9 @@ try {
                 <span className={cn("font-medium", cfg.color)}>{cfg.label}</span>
                 <span className="text-muted-foreground">
                   {docsTotal > 0 && `Docs: ${docsOk}/${docsTotal} · `}
-                  ₹{(adm.feePaid ?? adm.fee_paid ?? 0).toLocaleString("en-IN")} / ₹{(adm.feeAmount ?? adm.fee_amount ?? 0).toLocaleString("en-IN")}
+                  {/* ₹{(adm.feePaid ?? adm.fee_paid ?? 0).toLocaleString("en-IN")} / ₹{(adm.feeAmount ?? adm.fee_amount ?? 0).toLocaleString("en-IN")} */}
+                                  ₹{(adm.feePaid ?? 0).toLocaleString("en-IN")} /
+                ₹{(adm.feeAmount ?? 0).toLocaleString("en-IN")}
                 </span>
               </div>
               <div className="hidden md:block text-xs text-muted-foreground whitespace-nowrap">
@@ -758,3 +704,4 @@ function SectionDivider({ label }: { label: string }) {
 function inputCls() {
   return "flex h-9 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 }
+

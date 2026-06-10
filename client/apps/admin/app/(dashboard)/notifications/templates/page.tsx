@@ -1,4 +1,4 @@
-﻿// "use client";
+// "use client";
 // import { useEffect, useState } from "react";
 // import { api } from "@/lib/api";
 
@@ -7,7 +7,7 @@
 
 //   useEffect(() => {
 //     console.log("EFFECT FIRED");
-//     api.get("/notifications/templates").then(res => {
+//     api.get("/notifications/templates").then((res: any) => {
 //   console.log("FULL RESPONSE:", JSON.stringify(res.data));
 //   setTemplates(res.data ?? []);
 // });
@@ -79,10 +79,10 @@ function HighlightedBody({ body }: { body: string }) {
   );
 }
 
-// Standalone fetch helper — not a hook, safe to call anywhere
+// Standalone fetch helper � not a hook, safe to call anywhere
 function loadTemplates(setter: (t: Template[]) => void) {
   return api.get("/notifications/templates")
-    .then(res => setter(res.data ?? []))
+    .then((res: any) => setter(res.data ?? []))
     .catch(console.error);
 }
 
@@ -103,7 +103,7 @@ useEffect(() => {
   mountedRef.current = true;
   
   api.get("/notifications/templates")
-    .then(res => {
+    .then((res: any) => {
       if (mountedRef.current) {
         setTemplates(res.data ?? []);
         setLoading(false);
@@ -331,7 +331,7 @@ useEffect(() => {
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Subject *</label>
                   <input value={form.subject} onChange={e => setField("subject", e.target.value)}
-                    placeholder="Fee Due — Your School" className={inputCls} />
+                    placeholder="Fee Due � Your School" className={inputCls} />
                 </div>
               )}
 
@@ -351,7 +351,7 @@ useEffect(() => {
                 </div>
                 <textarea rows={4} value={form.body}
                   onChange={e => setField("body", e.target.value)}
-                  placeholder="Use {{variableName}} for dynamic values — e.g. Dear {{studentName}}, your fee of ₹{{amount}} is due on {{dueDate}}."
+                  placeholder="Use {{variableName}} for dynamic values � e.g. Dear {{studentName}}, your fee of ?{{amount}} is due on {{dueDate}}."
                   className={cn(
                     "flex w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none",
                     overLimit ? "border-red-400 focus-visible:ring-red-400" : "border-input"
@@ -385,7 +385,7 @@ useEffect(() => {
                 </button>
                 <button type="submit" disabled={submitting || overLimit}
                   className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60 transition-colors">
-                  {submitting ? "Saving…" : editTarget ? "Save Changes" : "Create Template"}
+                  {submitting ? "Saving�" : editTarget ? "Save Changes" : "Create Template"}
                 </button>
               </div>
             </form>
@@ -415,7 +415,7 @@ useEffect(() => {
               </button>
               <button onClick={handleDelete} disabled={deleting}
                 className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60 transition-colors">
-                {deleting ? "Deleting…" : "Delete"}
+                {deleting ? "Deleting�" : "Delete"}
               </button>
             </div>
           </div>

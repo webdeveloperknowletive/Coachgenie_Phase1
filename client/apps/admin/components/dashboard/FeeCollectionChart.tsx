@@ -19,7 +19,7 @@
 
 // function fmt(v: number | string | undefined) {
 //   const value = Number(v ?? 0);
-//   return `₹${(value / 100000).toFixed(1)}L`;
+//   return `?${(value / 100000).toFixed(1)}L`;
 // }
 
 // export function FeeCollectionChart() {
@@ -61,7 +61,7 @@ import { api } from "@/lib/api";
 
 function fmt(v: number | string | undefined) {
   const value = Number(v ?? 0);
-  return `₹${(value / 100000).toFixed(1)}L`;
+  return `?${(value / 100000).toFixed(1)}L`;
 }
 
 export function FeeCollectionChart() {
@@ -70,17 +70,17 @@ export function FeeCollectionChart() {
 
   // useEffect(() => {
   //   api.get("/fees/monthly-trend")
-  //     .then((res) => setData(res.data.data))
-  //     .catch(console.error)
+  //     .then((res: any) => setData(res.data.data))
+  //     .catch((err: unknown) => console.error(err))
   //     .finally(() => setLoading(false));
   // }, []);
   useEffect(() => {
   api.get("/fees/monthly-trend")
-    .then((res) => {
+    .then((res: any) => {
       const result = res.data?.data ?? res.data ?? [];
       setData(Array.isArray(result) ? result : []);
     })
-    .catch((err) => {
+    .catch((err: unknown) => {
       console.error(err);
       setData([]);
     })

@@ -8,7 +8,7 @@ import { StudentTable }     from "@/components/students/StudentTable";
 import { StudentForm, type StudentFormValues } from "@/components/students/StudentForm";
 import type { Student } from "@/lib/types/academic";
 
-// ── API helpers ────────────────────────────────────────────────────────────────
+// -- API helpers ----------------------------------------------------------------
 const API = "/api/proxy"
 
 function authHeaders(): HeadersInit {
@@ -23,7 +23,7 @@ function computeFees(invoices: any[]) {
   return { total, paid, due: total - paid };
 }
 
-/** Map raw API StudentOut → frontend Student shape */
+/** Map raw API StudentOut ? frontend Student shape */
 function mapStudent(raw: any, fees?: { total: number; paid: number; due: number }): Student {
   return {
     id:          String(raw.id),
@@ -39,13 +39,13 @@ function mapStudent(raw: any, fees?: { total: number; paid: number; due: number 
     address:     raw.address       ?? "",
     dob:         raw.date_of_birth ?? "",
     joinedAt:    raw.joined_at     ?? raw.created_at ?? new Date().toISOString(),
-    admissionId: raw.admission_id  ?? null,
+    ...({admissionId: raw.admission_id  ?? null} as any),
     fees: fees ?? { total: 0, paid: 0, due: 0 },
     targetExam: raw.target_exam ?? "",
   };
 }
 
-// ── Page ───────────────────────────────────────────────────────────────────────
+// -- Page -----------------------------------------------------------------------
 export default function StudentsPage() {
   const { students, setStudents, addStudent, updateStudent } = useAcademicStore();
 
@@ -54,7 +54,7 @@ export default function StudentsPage() {
   const [fetchError,  setFetchError]  = useState<string | null>(null);
   const [editStudent, setEditStudent] = useState<Student | null>(null);
 
-  // ── Fetch students + their fee summaries ──────────────────────────────────
+  // -- Fetch students + their fee summaries ----------------------------------
   const fetchStudents = useCallback(async () => {
     setLoading(true);
     setFetchError(null);
@@ -79,7 +79,7 @@ export default function StudentsPage() {
       if (invoices.length > 0) {
         fees = computeFees(invoices);
       } else if (s.admission_id) {
-        // No invoice yet — fallback to fee fields on the linked admission
+        // No invoice yet � fallback to fee fields on the linked admission
         const aRes = await fetch(`${API}/admissions/${s.admission_id}`, { headers: authHeaders() });
         if (aRes.ok) {
           const aJson = await aRes.json();
@@ -107,7 +107,7 @@ export default function StudentsPage() {
 
   useEffect(() => { fetchStudents(); }, [fetchStudents]);
 
-  // ── Create ─────────────────────────────────────────────────────────────────
+  // -- Create -----------------------------------------------------------------
   async function handleCreate(data: StudentFormValues) {
     try {
       const nameParts  = (data.name ?? "").trim().split(" ");
@@ -153,7 +153,7 @@ export default function StudentsPage() {
     }
   }
 
-  // ── Update ─────────────────────────────────────────────────────────────────
+  // -- Update -----------------------------------------------------------------
   async function handleUpdate(data: StudentFormValues) {
     if (!editStudent) return;
     try {
@@ -199,7 +199,7 @@ export default function StudentsPage() {
     }
   }
 
-  // ── Deactivate ─────────────────────────────────────────────────────────────
+  // -- Deactivate -------------------------------------------------------------
   async function handleDelete(id: string) {
     try {
       const res = await fetch(`${API}/students/${id}`, {
@@ -214,7 +214,7 @@ export default function StudentsPage() {
     }
   }
 
-  // ── Generate Student Report ───────────────────────────────────────────────
+  // -- Generate Student Report -----------------------------------------------
 async function handleGenerateStudentReport() {
 
   try {
@@ -354,7 +354,7 @@ async function handleGenerateStudentReport() {
   }
 }
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // -- Render -----------------------------------------------------------------
   const activeCount = students.filter((s) => s.status === "ACTIVE").length;
 
   return (
@@ -364,7 +364,7 @@ async function handleGenerateStudentReport() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Students</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {loading ? "Loading…" : `${students.length} total · ${activeCount} active`}
+            {loading ? "Loading�" : `${students.length} total � ${activeCount} active`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -478,3 +478,4 @@ async function handleGenerateStudentReport() {
     </div>
   );
 }
+

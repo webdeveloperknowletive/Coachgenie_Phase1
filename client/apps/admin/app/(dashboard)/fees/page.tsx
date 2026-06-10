@@ -603,3 +603,4 @@ const totalInvoices    = summary.total_invoices    ?? invoices.length;
     </div>
   );
 }
+

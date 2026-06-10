@@ -1,0 +1,11 @@
+﻿components/ai/AnalyticsChatBubble.tsx(76,52): error TS2304: Cannot find name 'append'.
+components/ai/CopilotSidebar.tsx(130,48): error TS2304: Cannot find name 'append'.
+components/dashboard/AttendanceHeatmap.tsx(119,36): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/FeeCollectionChart.tsx(80,22): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/FeeCollectionChart.tsx(80,40): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/KpiCards.tsx(150,24): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/KpiCards.tsx(150,42): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/LeadFunnelChart.tsx(75,41): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/LeadFunnelChart.tsx(76,24): error TS18046: 'res' is of type 'unknown'.
+components/dashboard/LeadFunnelChart.tsx(76,42): error TS18046: 'res' is of type 'unknown'.
+hooks/ai.hooks.ts(332,37): error TS2304: Cannot find name 'accessToken'.

@@ -14,12 +14,12 @@
 
 //   useEffect(() => {
 //   api.get("/leads/funnel")
-//     .then((res) => {
+//     .then((res: any) => {
 //       console.log("funnel response:", res.data); // check shape
 //       const result = res.data?.data ?? res.data ?? [];
 //       setData(Array.isArray(result) ? result : []);
 //     })
-//     .catch((err) => {
+//     .catch((err: unknown) => {
 //       console.error("funnel error:", err);
 //       setData([]);
 //     })
@@ -71,12 +71,12 @@ export function LeadFunnelChart() {
 
   useEffect(() => {
     api.get("/leads/funnel")
-      .then((res) => {
+      .then((res: any) => {
         console.log("funnel response:", res.data);
         const result = res.data?.data ?? res.data ?? [];
         setData(Array.isArray(result) ? result : []);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("funnel error:", err);
         setData([]);
       })

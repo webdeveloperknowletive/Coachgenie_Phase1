@@ -42,10 +42,10 @@
 //   //   toast.success("Activity logged");
 //   // }
 //   async function handleAddActivity(type: ActivityType, content: string) {
-//     const createdBy = currentUser?.name ?? currentUser?.email ?? "Staff";
+//     const createdBy = (currentUser?.first_name ?? currentUser?.last_name) ?? currentUser?.email ?? "Staff";
 //     store.addActivity(id, { type, content, createdBy });
 //     try {
-//       const res = await fetch(`${API}/leads/${lead.id}/activities`, {
+//       const res = await fetch(`${API}/leads/${lead!.id}/activities`, {
 //         method:  "POST",
 //         headers: authHeaders(),
 //         body:    JSON.stringify({ type: type.toLowerCase(), content, created_by: createdBy }),
@@ -293,14 +293,11 @@ import type { ActivityType, LeadStage } from "@/lib/types/lead";
 
 
 
-// Add this line after the imports, before the component
-const API = "/api/proxy"
-
 const API = "/api/proxy";
 
 
 
-const API = "/api/proxy";
+
 
 
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -339,10 +336,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
 
   async function handleAddActivity(type: ActivityType, content: string) {
-    const createdBy = currentUser?.name ?? currentUser?.email ?? "Staff";
+    const createdBy = (currentUser?.first_name ?? currentUser?.last_name) ?? currentUser?.email ?? "Staff";
     store.addActivity(id, { type, content, createdBy });
     try {
-      const res = await fetch(`${API}/leads/${lead.id}/activities`, {
+      const res = await fetch(`${API}/leads/${lead!.id}/activities`, {
         method:  "POST",
         headers: authHeaders(),
         body:    JSON.stringify({ type: type.toLowerCase(), content, created_by: createdBy }),
@@ -356,129 +353,19 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
 
 
-  function authHeaders(): HeadersInit {
-  return { "Content-Type": "application/json" };
-}
-
-
-const patchRes = await fetch(`${API}/leads/${lead.id}`, {
-  method:  "PATCH",
-  headers: authHeaders(),
-  body:    JSON.stringify({ status: "enrolled" }),
-});
-console.log("Lead PATCH status:", patchRes.status);
-const patchJson = await patchRes.json().catch(() => ({}));
-console.log("Lead PATCH response:", JSON.stringify(patchJson));
 
 
 
 
-  // async function handleConvert() {
-  //   try {
-  //     // 1. Create the admission
-  //     const res = await fetch(`${API}/admissions`, {
-  //       method:  "POST",
-  //       headers: authHeaders(),
-  //       body:    JSON.stringify({ lead_id: lead.id }),
-  //     });
-  //     if (!res.ok) throw new Error("Failed to create admission");
-  //     const result = await res.json();
 
-  //     // 2. Patch the lead status to enrolled
-  //     const patchRes = await fetch(`${API}/leads/${lead.id}`, {
-  //       method:  "PATCH",
-  //       headers: authHeaders(),
-  //       body:    JSON.stringify({ status: "enrolled" }),
-  //     });
-  //     console.log("Lead PATCH status:", patchRes.status);
-  //     const patchJson = await patchRes.json().catch(() => ({}));
-  //     console.log("Lead PATCH response:", JSON.stringify(patchJson));
-
-  //     store.updateStage(lead.id, "ENROLLED");
-  //     toast.success("Lead converted to admission!");
-  //     router.push(`/admissions/${result.data.id}`);
-  //   } catch (err: any) {
-  //     toast.error(err?.message || "Could not convert lead. Please try again.");
-  //   }
-  // }
-  async function handleConvert() {
-  try {
-    const res = await fetch(`${API}/admissions`, {
-      method:  "POST",
-      headers: authHeaders(),
-      body: JSON.stringify({
-        lead_id:      lead.id,
-        student_name: lead.name,
-        phone:        lead.phone        || undefined,
-        email:        lead.email        || undefined,
-        parent_name:  lead.parentName   || undefined,
-        parent_phone: lead.parentContactNumber || undefined,
-        school_name:  lead.schoolName   || undefined,
-        grade:        lead.grade        || undefined,
-        board_name:   lead.boardName    || undefined,
-        batch_id:     lead.batchId      || undefined,
-        batch_name:   lead.batchName    || undefined,
-        subjects:     lead.subjects?.length ? lead.subjects : undefined,
-        status:       "PENDING_DOCS",
-        documents: [
-          { name: "Aadhar Card",         required: true,  submitted: false },
-          { name: "Previous Marksheet",  required: true,  submitted: false },
-          { name: "Passport Photo",      required: true,  submitted: false },
-          { name: "Transfer Certificate",required: false, submitted: false },
-          { name: "Address Proof",       required: false, submitted: false },
-          { name: "Birth Certificate",   required: false, submitted: false },
-        ],
-        fee_amount: 0,
-        fee_paid:   0,
-      }),
-    });
-
-    if (!res.ok) throw new Error("Failed to create admission");
-    const result = await res.json();
-
-    const patchRes = await fetch(`${API}/leads/${lead.id}`, {
-      method:  "PATCH",
-      headers: authHeaders(),
-      body:    JSON.stringify({ status: "enrolled" }),
-    });
-    console.log("Lead PATCH status:", patchRes.status);
-    const patchJson = await patchRes.json().catch(() => ({}));
-    console.log("Lead PATCH response:", JSON.stringify(patchJson));
-
-
-
-    store.updateStage(lead.id, "ENROLLED");
-    toast.success("Lead converted to admission!");
-    router.push(`/admissions/${result.data.id}`);
-
-    } catch (err: any) {
-      toast.error(err?.message || "Could not convert lead. Please try again.");
-    }
+  function handleConvert() {
+    if (!lead) return;
+    window.location.href = `/admissions/new?leadId=${lead!.id}&name=${encodeURIComponent((lead as any).name ?? "")}`;
   }
-
-  // function handleDelete() {
-  //   store.deleteLead(id);
-  //   toast.success("Lead deleted");
-  //   router.push("/leads");
-  // }
-
-
-    store.updateStage(lead.id, "ENROLLED");
-    toast.success("Lead converted to admission!");
-    router.push(`/admissions/${result.data.id}`);
-
-  } catch (err: any) {
-    toast.error(err?.message || "Could not convert lead. Please try again.");
-  }
-}
-
-
-
-
 
   async function handleDelete() {
     try {
-      const res = await fetch(`${API}/leads/${lead.id}`, {
+      const res = await fetch(`${API}/leads/${lead!.id}`, {
         method:  "DELETE",
         headers: authHeaders(),
       });
@@ -501,7 +388,7 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
 
   const alreadyAdmitted = lead.stage === "ENROLLED" ||
     store.admissions.some(
-      (a) => a.leadId === lead.id || (a as any).lead_id === lead.id
+      (a) => a.leadId === lead!.id || (a as any).lead_id === lead!.id
     );
 
   return (
@@ -646,9 +533,9 @@ console.log("Lead PATCH response:", JSON.stringify(patchJson));
 
 
                     onClick={async () => {
-                      store.updateStage(lead.id, s);
+                      store.updateStage(lead!.id, s);
                       try {
-                        const res = await fetch(`${API}/leads/${lead.id}`, {
+                        const res = await fetch(`${API}/leads/${lead!.id}`, {
                           method:  "PATCH",
                           headers: authHeaders(),
                           body:    JSON.stringify({ status: s.toLowerCase() }),

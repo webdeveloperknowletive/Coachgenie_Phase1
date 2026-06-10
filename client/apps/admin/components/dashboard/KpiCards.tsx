@@ -17,9 +17,9 @@
 // }
 
 // function formatCurrency(val: number) {
-//   if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-//   if (val >= 1000) return `₹${(val / 1000).toFixed(1)}K`;
-//   return `₹${val}`;
+//   if (val >= 100000) return `?${(val / 100000).toFixed(1)}L`;
+//   if (val >= 1000) return `?${(val / 1000).toFixed(1)}K`;
+//   return `?${val}`;
 // }
 
 // export function KpiCards() {
@@ -28,24 +28,24 @@
 
 //   // useEffect(() => {
 //   //   api.get("/dashboard/owner")
-//   //     .then((res) => setData(res.data.data))
-//   //     .catch(console.error)
+//   //     .then((res: any) => setData(res.data.data))
+//   //     .catch((err: unknown) => console.error(err))
 //   //     .finally(() => setLoading(false));
 //   // }, []);
 //   useEffect(() => {
 //   api.get("/dashboard/owner")
-//     .then((res) => {
+//     .then((res: any) => {
 //       console.log("dashboard response:", res.data);
 //       setData(res.data.data);
 //     })
-//     .catch(console.error)
+//     .catch((err: unknown) => console.error(err))
 //     .finally(() => setLoading(false));
 // }, []);
 
 //   const kpis = [
 //     {
 //       title:    "Total Students",
-//       value:    loading ? "—" : String(data?.total_students ?? 0),
+//       value:    loading ? "�" : String(data?.total_students ?? 0),
 //       icon:     Users,
 //       color:    "text-blue-500",
 //       bg:       "bg-blue-50 dark:bg-blue-950/40",
@@ -55,7 +55,7 @@
 //     },
 //     {
 //       title:    "Active Batches",
-//       value:    loading ? "—" : String(data?.active_batches ?? 0),
+//       value:    loading ? "�" : String(data?.active_batches ?? 0),
 //       icon:     CalendarDays,
 //       color:    "text-violet-500",
 //       bg:       "bg-violet-50 dark:bg-violet-950/40",
@@ -65,19 +65,19 @@
 //     },
 //     {
 //       title:    "Fee Collected",
-//       value:    loading ? "—" : formatCurrency(
+//       value:    loading ? "�" : formatCurrency(
 //                   (data?.total_revenue ?? 0) - (data?.pending_revenue ?? 0)
 //                 ),
 //       icon:     IndianRupee,
 //       color:    "text-emerald-500",
 //       bg:       "bg-emerald-50 dark:bg-emerald-950/40",
-//       change:   loading ? null : `₹${((data?.pending_revenue ?? 0) / 1000).toFixed(1)}K pending`,
+//       change:   loading ? null : `?${((data?.pending_revenue ?? 0) / 1000).toFixed(1)}K pending`,
 //       positive: false,
 //       sub:      "total collected",
 //     },
 //     {
 //       title:    "Attendance Rate",
-//       value:    loading ? "—" : `${data?.avg_attendance_percent ?? 0}%`,
+//       value:    loading ? "�" : `${data?.avg_attendance_percent ?? 0}%`,
 //       icon:     TrendingUp,
 //       color:    "text-amber-500",
 //       bg:       "bg-amber-50 dark:bg-amber-950/40",
@@ -135,9 +135,9 @@ interface OwnerDashboard {
 }
 
 function formatCurrency(val: number) {
-  if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-  if (val >= 1000) return `₹${(val / 1000).toFixed(1)}K`;
-  return `₹${val}`;
+  if (val >= 100000) return `?${(val / 100000).toFixed(1)}L`;
+  if (val >= 1000) return `?${(val / 1000).toFixed(1)}K`;
+  return `?${val}`;
 }
 
 export function KpiCards() {
@@ -146,11 +146,11 @@ export function KpiCards() {
 
   useEffect(() => {
     api.get("/dashboard/owner")
-      .then((res) => {
+      .then((res: any) => {
         const result = res.data?.data ?? res.data;
         setData(result);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("kpi error:", err);
       })
       .finally(() => {
@@ -199,7 +199,7 @@ export function KpiCards() {
       icon:     IndianRupee,
       color:    "text-emerald-500",
       bg:       "bg-emerald-50 dark:bg-emerald-950/40",
-      change:   `₹${(data.pending_revenue / 1000).toFixed(1)}K pending`,
+      change:   `?${(data.pending_revenue / 1000).toFixed(1)}K pending`,
       positive: false,
       sub:      "total collected",
     },

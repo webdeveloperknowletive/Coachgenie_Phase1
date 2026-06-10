@@ -1,5 +1,5 @@
 "use client";
-
+import type { AttendanceRecord, AttendanceStatus } from "@/lib/types/academic";
 import { useState, useEffect, useCallback } from "react";
 import { format, subDays }                  from "date-fns";
 import { RefreshCw }                        from "lucide-react";
@@ -82,6 +82,20 @@ export default function AttendanceReportsPage() {
     fetchRecords();
   }, [fetchRecords]);
 
+const records: AttendanceRecord[] = apiRecords.map((r, index) => ({
+  id: `${r.studentId}-${r.date}-${index}`,
+  studentId: r.studentId,
+  batchId: r.batchId,
+  date: r.date,
+  status: (
+    r.status === "present"
+      ? "PRESENT"
+      : r.status === "absent"
+      ? "ABSENT"
+      : "LATE"
+  ) as AttendanceStatus,
+}));
+
   return (
     <div className="space-y-5">
       <div>
@@ -134,13 +148,14 @@ export default function AttendanceReportsPage() {
           Loading attendance data…
         </div>
       ) : (
-        <AttendanceReport
-          students={students}
-          records={apiRecords}
-          startDate={new Date(startDate)}
-          endDate={new Date(endDate)}
-        />
+            <AttendanceReport
+        students={students}
+        records={records}
+        startDate={new Date(startDate)}
+        endDate={new Date(endDate)}
+      />
       )}
     </div>
   );
 }
+

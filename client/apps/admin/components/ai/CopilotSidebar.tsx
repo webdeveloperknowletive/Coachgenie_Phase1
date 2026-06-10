@@ -24,8 +24,7 @@ export function CopilotSidebar() {
     { invoices: finance.invoices }
   );
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, stop, append, setMessages } =
-    useCoachGenieChat({ context });
+  const { messages, input, handleInputChange, handleSubmit, isLoading, stop, setMessages, append } = useCoachGenieChat({ context });
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -143,3 +142,4 @@ export function CopilotSidebar() {
     </>
   );
 }
+

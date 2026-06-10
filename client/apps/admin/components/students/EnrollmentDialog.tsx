@@ -1,83 +1,3 @@
-// "use client";
-// import { useState } from "react";
-// import { X, CheckCircle } from "lucide-react";
-// import { toast } from "sonner";
-// import { useAcademicStore } from "@/lib/stores/academic.store";
-// import { cn } from "@/lib/utils";
-
-// interface EnrollmentDialogProps {
-//   studentId: string;
-//   studentName: string;
-//   onClose: () => void;
-// }
-
-// export function EnrollmentDialog({ studentId, studentName, onClose }: EnrollmentDialogProps) {
-//   const { batches, students, enrollStudent } = useAcademicStore();
-//   const student    = students.find(s => s.id === studentId);
-//   const [selected, setSelected] = useState<string[]>(student?.batchIds ?? []);
-
-//   function handleToggle(batchId: string) {
-//     setSelected(prev =>
-//       prev.includes(batchId) ? prev.filter(b => b !== batchId) : [...prev, batchId]
-//     );
-//   }
-
-//   function handleSave() {
-//     selected.forEach(batchId => enrollStudent(batchId, studentId));
-//     toast.success(`Enrollment updated for ${studentName}`);
-//     onClose();
-//   }
-
-//   return (
-//     <>
-//       <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-//       <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-2xl border bg-background shadow-2xl">
-//         <div className="flex items-center justify-between border-b px-6 py-4">
-//           <div>
-//             <h2 className="font-semibold">Enroll in Batches</h2>
-//             <p className="text-sm text-muted-foreground">{studentName}</p>
-//           </div>
-//           <button onClick={onClose} className="rounded-lg p-1.5 hover:bg-accent transition-colors">
-//             <X className="h-4 w-4" />
-//           </button>
-//         </div>
-//         <div className="p-5 space-y-2 max-h-96 overflow-y-auto">
-//           {batches.map(batch => {
-//             const enrolled = selected.includes(batch.id);
-//             return (
-//               <label key={batch.id}
-//                 className={cn(
-//                   "flex items-center gap-3 rounded-xl border p-4 cursor-pointer transition-all",
-//                   enrolled ? "border-primary/40 bg-primary/5" : "hover:bg-muted/50"
-//                 )}>
-//                 <input type="checkbox" checked={enrolled} onChange={() => handleToggle(batch.id)}
-//                   className="h-4 w-4 accent-primary" />
-//                 <div className="flex-1 min-w-0">
-//                   <p className="text-sm font-medium">{batch.name}</p>
-//                   <p className="text-xs text-muted-foreground">{batch.teacher} · {batch.grade} · {batch.room}</p>
-//                   <p className="text-xs text-muted-foreground">{batch.schedule.map(s => `${s.day} ${s.time}`).join(", ")}</p>
-//                 </div>
-//                 <div className="text-right shrink-0">
-//                   <p className="text-xs font-medium">{batch.studentIds.length}/{batch.maxSize}</p>
-//                   <p className="text-xs text-muted-foreground">students</p>
-//                 </div>
-//                 {enrolled && <CheckCircle className="h-4 w-4 text-primary shrink-0" />}
-//               </label>
-//             );
-//           })}
-//         </div>
-//         <div className="border-t p-4 flex justify-end gap-3">
-//           <button onClick={onClose} className="rounded-md border px-4 py-2 text-sm hover:bg-accent transition-colors">Cancel</button>
-//           <button onClick={handleSave} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
-//             Save Enrollment
-//           </button>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
-
-
 "use client";
 import { useState, useEffect } from "react";
 import { X, CheckCircle, RefreshCw } from "lucide-react";
@@ -155,7 +75,7 @@ export function EnrollmentDialog({ studentId, studentName, onClose }: Enrollment
       }
       setEnrolledIds(prev => {
         const next = new Set(prev);
-        isEnrolled ? next.delete(batchId) : next.add(batchId);
+        if (isEnrolled) { next.delete(batchId); } else { next.add(batchId); }
         return next;
       });
       toast.success(isEnrolled ? "Removed from batch" : "Enrolled in batch");
@@ -246,3 +166,4 @@ export function EnrollmentDialog({ studentId, studentName, onClose }: Enrollment
     </>
   );
 }
+

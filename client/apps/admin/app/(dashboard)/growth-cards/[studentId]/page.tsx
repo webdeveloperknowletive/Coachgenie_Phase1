@@ -398,10 +398,10 @@ export default function GrowthCardPage({ params }: { params: Promise<{ studentId
   useEffect(() => {
   async function load() {
     try {
-      const [sRes, cRes] = await Promise.all([
+      const [sRes, cRes] = (await Promise.all([
         api.get(`/students/${studentId}`),
         api.get(`/growth-cards/student/${studentId}`),
-      ]);
+      ])) as [any, any];
       const s = sRes.data?.data ?? sRes.data;
       setStudent({
         id:       String(s.id),
@@ -440,7 +440,7 @@ export default function GrowthCardPage({ params }: { params: Promise<{ studentId
   async function handleGenerate() {
   setGenerating(true);
   try {
-    const res = await api.post(`/growth-cards/generate/${studentId}`, {});
+    const res = (await api.post(`/growth-cards/generate/${studentId}`, {})) as any;
     const newCard = res.data?.data ?? res.data;
     setCards(prev => [newCard, ...prev]);
     toast.success("Growth card generated!");

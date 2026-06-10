@@ -1,11 +1,4 @@
 "use client";
-// import { useState, useEffect } from "react";
-// import { useForm } from "react-hook-form";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { z } from "zod";
-// import { cn } from "@/lib/utils";
-// import { Loader2 } from "lucide-react";
-// import type { Batch } from "@/app/(dashboard)/leads/page";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -186,7 +179,7 @@ export function LeadForm({
     setSelectedSubjects(
       batch?.subjects?.filter((s: string) => s && s !== "N/A") ?? []
     );
-  }, [selectedBatchId]);
+  }, [selectedBatchId, batches]);
 
   
 
@@ -388,3 +381,4 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
