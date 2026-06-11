@@ -216,5 +216,5 @@ def start_scheduler():
         replace_existing=True,
     )
     scheduler.start()
-    asyncio.get_event_loop().run_until_complete(create_default_templates())
+    scheduler.add_job(create_default_templates, "date", id="init_templates", replace_existing=True)
     logger.info("[SCHEDULER] Started")
