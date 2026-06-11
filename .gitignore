@@ -13,3 +13,6 @@ coach-ai-5/
 backend/node_modules/
 backend/package.json
 backend/pnpm-lock.yaml
+__pycache__/
+*.pyc
+*.pyo
