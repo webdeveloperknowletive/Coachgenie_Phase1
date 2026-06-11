@@ -57,7 +57,6 @@ pyasn1==0.6.3
 pycairo==1.29.0
 pycparser==3.0
 pydantic==2.10.6
-pydantic-core==2.46.4
 pydantic-settings==2.7.1
 pydyf==0.12.1
 pygments==2.20.0
