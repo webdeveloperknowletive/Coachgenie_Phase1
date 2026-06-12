@@ -99,23 +99,21 @@
 #     return datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
 
 
+import bcrypt
 import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from app.config import settings
 from app.utils.exceptions import UnauthorizedError
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password[:72])
+    return bcrypt.hashpw(password[:72].encode(), bcrypt.gensalt(rounds=12)).decode()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain[:72], hashed)
+    return bcrypt.checkpw(plain[:72].encode(), hashed.encode())
 
 
 def create_access_token(data: dict) -> str:
