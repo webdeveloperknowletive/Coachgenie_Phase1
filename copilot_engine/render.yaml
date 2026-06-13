@@ -75,7 +75,7 @@ services:
           type: pserv
           name: pgbouncer
           property: connectionString
-      - key: OPENAI_API_KEY
+      - key: GROQ_API_KEY
         sync: false # Set this manually in the Render Dashboard for security
 
   # --------------------------------------------------------
