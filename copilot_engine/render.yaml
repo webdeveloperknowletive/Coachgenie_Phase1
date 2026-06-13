@@ -66,7 +66,7 @@ services:
     env: python
     rootDir: copilot_engine # MATCHES YOUR VS CODE FOLDER
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT" # FIXED PORT
+    startCommand: "uvicorn copilot_engine.main:app --host 0.0.0.0 --port $PORT" # FIXED PORT
     plan: starter
     region: singapore
     envVars:
