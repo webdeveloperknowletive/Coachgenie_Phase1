@@ -253,7 +253,7 @@ async function handleGenerateStudentReport() {
     // =====================================================
 
     const res = await fetch(
-      "https://coachgenie-backend-rgx1.onrender.com/reports/student-performance",
+      "https://coachgenie-phase1-s227.onrender.com/reports/student-performance",
       {
         method: "POST",
 
