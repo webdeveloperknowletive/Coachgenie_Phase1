@@ -253,7 +253,7 @@ async function handleGenerateStudentReport() {
     // =====================================================
 
     const res = await fetch(
-      "http://127.0.0.1:8001/reports/student-performance",
+      "https://coachgenie-backend-rgx1.onrender.com/reports/student-performance",
       {
         method: "POST",
 
