@@ -302,11 +302,41 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
         }
 
         // 5. Syllabus ← NEW
-        const sRes = await fetch(`${API}/syllabus/${id}`, { headers: authHeaders() });
-        if (sRes.ok) {
-          const sJson = await sRes.json();
-          setSyllabus(sJson.data ?? []);
-        }
+        // const sRes = await fetch(`${API}/syllabus/${id}`, { headers: authHeaders() });
+        // if (sRes.ok) {
+        //   const sJson = await sRes.json();
+        //   setSyllabus(sJson.data ?? []);
+        // }
+
+        try {
+  const [batchRes, subjectsRes] = await Promise.all([
+    fetch(`${API}/batches/${id}`, { headers: authHeaders() }),
+    fetch(`${API}/batches/subjects`, { headers: authHeaders() }),
+  ]);
+  if (batchRes.ok && subjectsRes.ok) {
+    const batchJson    = await batchRes.json();
+    const subjectsJson = await subjectsRes.json();
+    const batchData    = batchJson.data ?? batchJson;
+    const allSubjects: any[] = subjectsJson.data ?? [];
+    const batchSubjectNames  = new Set(
+      (batchData.subjects ?? []).map((s: string) => s.toLowerCase().trim())
+    );
+    const matchedSubjects = allSubjects.filter(
+      (s: any) => batchSubjectNames.has(s.name.toLowerCase().trim())
+    );
+    // Fetch syllabus for each matched subject
+    const topicArrays = await Promise.all(
+      matchedSubjects.map((s: any) =>
+        fetch(`${API}/batches/${id}/syllabus?subject_id=${s.id}`, { headers: authHeaders() })
+          .then(r => r.ok ? r.json() : { data: [] })
+          .then(j => (j.data ?? []).map((t: any) => ({ ...t, subjectName: s.name })))
+      )
+    );
+    setSyllabus(topicArrays.flat());
+  }
+} catch {
+  // silent — syllabus is optional on this page
+}
 
       } catch (err: any) {
         setError(err.message ?? "Failed to load batch");
@@ -374,7 +404,8 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
     </div>
   );
 
-  const completedTopics  = syllabus.filter((t: any) => t.completed).length;
+  // const completedTopics  = syllabus.filter((t: any) => t.completed).length;
+  const completedTopics = syllabus.filter((t: any) => t.status === "completed").length;
   const syllabusProgress = syllabus.length > 0
     ? Math.round((completedTopics / syllabus.length) * 100) : 0;
 
@@ -557,13 +588,13 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
             {syllabus.map((t: any) => (
               <div key={t.id} className="flex items-center gap-3 text-sm">
                 <div className={cn(
-                  "h-4 w-4 rounded-full border-2 shrink-0",
-                  t.completed ? "bg-primary border-primary" : "border-muted-foreground/30"
-                )} />
-                <span className={t.completed ? "line-through text-muted-foreground" : ""}>{t.title}</span>
-                {t.subject && (
-                  <span className="ml-auto text-xs text-muted-foreground">{t.subject}</span>
-                )}
+  "h-4 w-4 rounded-full border-2 shrink-0",
+  t.status === "completed" ? "bg-primary border-primary" : "border-muted-foreground/30"
+)} />
+<span className={t.status === "completed" ? "line-through text-muted-foreground" : ""}>{t.title}</span>
+{t.subjectName && (
+  <span className="ml-auto text-xs text-muted-foreground">{t.subjectName}</span>
+)}
               </div>
             ))}
           </div>

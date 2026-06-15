@@ -288,8 +288,8 @@ export default function AdmissionDetailPage({ params }: { params: Promise<{ id: 
   );
 
   const studentName = adm.studentName  ?? adm.student_name  ?? "—";
-  const feeAmount   = adm.feeAmount    ?? adm.fee_amount     ?? 0;
-  const feePaid     = adm.feePaid      ?? adm.fee_paid       ?? 0;
+ const feeAmount = adm.payment?.totalFee  ?? adm.feeAmount  ?? adm.fee_amount  ?? 0;
+const feePaid   = adm.payment?.amountPaid ?? adm.feePaid   ?? adm.fee_paid    ?? 0;
   const createdAt   = adm.createdAt    ?? adm.created_at;
   const approvedAt  = (adm as any).enrolledAt ?? (adm as any).approved_at ?? adm.approved_at;
   // const subjects    = adm.subjects?.length ? adm.subjects : adm.applied_course ? [adm.applied_course] : [];
@@ -325,14 +325,27 @@ export default function AdmissionDetailPage({ params }: { params: Promise<{ id: 
     toast.success(`Status → ${STATUS_LABELS[next]}`);
   }
 
-  async function handlePaymentSave(updated: AdmissionPayment) {
-    await patchAdmission({
-      payment: updated, fee_amount: updated.totalFee, fee_paid: updated.amountPaid,
-      status: updated.paymentStatus === "FULL" ? "CONFIRMED" : updated.paymentStatus === "PARTIAL" ? "FEE_PENDING" : adm!.status,
-    });
-    toast.success("Payment details updated");
-    setShowEditPayment(false);
-  }
+async function handlePaymentSave(updated: AdmissionPayment) {
+  // Optimistically update local state immediately
+  setAdm(prev => prev ? {
+    ...prev,
+    payment:    updated,
+    fee_amount: updated.totalFee,
+    fee_paid:   updated.amountPaid,
+    feeAmount:  updated.totalFee,
+    feePaid:    updated.amountPaid,
+  } : prev);
+  setShowEditPayment(false);
+
+  await patchAdmission({
+    payment:    updated,
+    fee_amount: updated.totalFee,
+    fee_paid:   updated.amountPaid,
+    status: updated.paymentStatus === "FULL"    ? "CONFIRMED"   :
+            updated.paymentStatus === "PARTIAL" ? "FEE_PENDING" : adm!.status,
+  });
+  toast.success("Payment details updated");
+}
 
   async function markInstallmentPaid(idx: number) {
     if (!payment.installmentSchedule.length) return;

@@ -6,9 +6,10 @@ from pydantic import Field
 class Settings(BaseSettings):
     APP_NAME: str = "CoachingERP"
     DEBUG: bool = Field(default=True, description="Enable debug mode for detailed error messages")
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,https://coachgenie-phase1.onrender.com"
 
     DATABASE_URL: str = "postgresql+asyncpg://postgres:Aman%40319@localhost:5432/erp"
+
 
     SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"

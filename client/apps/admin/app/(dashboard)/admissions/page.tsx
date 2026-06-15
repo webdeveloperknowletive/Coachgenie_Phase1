@@ -505,12 +505,7 @@ async function handleSave(data: AddFormState) {
     //   return;
     // }
 
-      const tenantId = useAuthStore.getState().tenantId;
-
-    if (!tenantId) {
-      toast.error("Tenant information is missing.");
-      return;
-    }
+      
    
 
     const totalFee   = parseFloat(data.totalFee) || 0;
@@ -639,10 +634,9 @@ try {
                 <StatusIcon className={cn("h-5 w-5", cfg.color)} />
               </div>
               <div className="flex-1 min-w-0">
-                {/* <p className="font-semibold text-sm truncate">{adm.studentName ?? adm.student_name}</p> */}
-                                <p className="font-semibold text-sm truncate">
-                  {adm.studentName}
-                </p>
+                <p className="font-semibold text-sm truncate">
+  {adm.studentName ?? (adm as any).student_name ?? "—"}
+</p>
                 <p className="text-xs text-muted-foreground">
                   {[
                     (adm as any).board_name,
@@ -656,8 +650,7 @@ try {
                 <span className="text-muted-foreground">
                   {docsTotal > 0 && `Docs: ${docsOk}/${docsTotal} · `}
                   {/* ₹{(adm.feePaid ?? adm.fee_paid ?? 0).toLocaleString("en-IN")} / ₹{(adm.feeAmount ?? adm.fee_amount ?? 0).toLocaleString("en-IN")} */}
-                                  ₹{(adm.feePaid ?? 0).toLocaleString("en-IN")} /
-                ₹{(adm.feeAmount ?? 0).toLocaleString("en-IN")}
+                                  ₹{(adm.feePaid ?? (adm as any).fee_paid ?? 0).toLocaleString("en-IN")} / ₹{(adm.feeAmount ?? (adm as any).fee_amount ?? 0).toLocaleString("en-IN")}
                 </span>
               </div>
               <div className="hidden md:block text-xs text-muted-foreground whitespace-nowrap">

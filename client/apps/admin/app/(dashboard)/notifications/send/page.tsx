@@ -64,10 +64,10 @@ export default function SendNotificationPage() {
 
   useEffect(() => {
     async function load() {
-      async function safeFetch(url: string): Promise<any[]> {
+            async function safeFetch(url: string): Promise<any[]> {
         try {
           const res = await api.get(url) as any;
-          return res.data?.data?.items ?? res.data?.data ?? res.data ?? [];
+          return res?.data?.items ?? res?.items ?? res?.data ?? (Array.isArray(res) ? res : []);
         } catch (err: any) {
           const status = err?.response?.status;
           if (status === 404 || status === 422 || status === 405) return [];
@@ -88,7 +88,7 @@ export default function SendNotificationPage() {
 
       try {
         const tRes = await api.get("/notifications/templates") as any;
-        setTemplates(tRes.data ?? []);
+setTemplates(tRes?.data ?? tRes?.items ?? (Array.isArray(tRes) ? tRes : []));
       } catch (err) {
         console.error("Failed to load templates:", err);
         toast.error("Failed to load templates");

@@ -174,7 +174,7 @@ export default function AiAnalyticsPage() {
     context: instituteContext,
 
     apiEndpoint:
-      "http://127.0.0.1:8001/copilot/chat",
+      "https://coachgenie-phase1-s227.onrender.com/copilot/chat",
   });
 
   // Auto Scroll

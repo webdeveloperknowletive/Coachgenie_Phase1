@@ -4,7 +4,7 @@ import { X, Phone, Mail, User, GraduationCap, ExternalLink, BookOpen, Building2,
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/lib/types/lead";
-import { StageBadge } from "./StageBadge";
+import { StageBadge } from "./StageBadge"; 
 import { STAGE_CONFIG, STAGES } from "@/lib/constants/leads";
 import { useLeadStore } from "@/lib/stores/leads.store";
 
