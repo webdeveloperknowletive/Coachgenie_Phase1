@@ -400,7 +400,7 @@ export default function AttendancePage() {
       );
 
       const response = await fetch(
-        "http://127.0.0.1:8001/reports/attendance-report",
+        "https://coachgenie-backend-rgx1.onrender.com/reports/attendance-report",
         {
           method: "POST",
 

@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 # =========================================================
 
 COPILOT_ENGINE_BASE_URL = (
-    "http://127.0.0.1:8001"
+    "http://127.0.0.1:8001",
+    "https://coachgenie-backend-rgx1.onrender.com"
 )
 
 DEFAULT_TIMEOUT = 120.0

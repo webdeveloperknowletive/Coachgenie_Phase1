@@ -98,7 +98,7 @@ class ChatOrchestrator:
             filename = os.path.basename(pdf_path)
             
             report_url = (
-                f"http://127.0.0.1:8001/generated_reports/{filename}"
+                f"postgresql://coachgenie_db_asry_user:2oWHXXd7HFfrTzLBZZiuUAD3EvqSyFRO@dpg-d8km3nd8nd3s73bcpnq0-a.oregon-postgres.render.com/coachgenie_db_asry/generated_reports/{filename}"
             )
 
             return {

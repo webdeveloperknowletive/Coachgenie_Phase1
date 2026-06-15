@@ -337,7 +337,7 @@ export default function BatchesPage() {
       setGeneratingReport(batch.id);
 
       const response = await fetch(
-        "http://127.0.0.1:8001/reports/batch-performance",
+        "https://coachgenie-backend-rgx1.onrender.com/reports/batch-performance",
         {
           method: "POST",
 
