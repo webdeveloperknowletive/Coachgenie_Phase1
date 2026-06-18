@@ -737,19 +737,32 @@ export function Topbar({ sidebarCollapsed: _ }: TopbarProps) {
   }
 
   // ── Logout ───────────────────────────────────────────────────────────────
+  // async function handleLogout() {
+  //   const { refreshToken, clear } = useAuthStore.getState();
+  //   try {
+  //     if (refreshToken) {
+  //       await api.post("/auth/logout", { refresh_token: refreshToken });
+  //     }
+  //   } catch (err) {
+  //     console.error("Logout API failed:", err);
+  //   }
+  //   clear();
+  //   document.cookie = "cg_access_token=; path=/; max-age=0";
+  //   router.push("/login");
+  // }
   async function handleLogout() {
-    const { refreshToken, clear } = useAuthStore.getState();
-    try {
-      if (refreshToken) {
-        await api.post("/auth/logout", { refresh_token: refreshToken });
-      }
-    } catch (err) {
-      console.error("Logout API failed:", err);
+  const { refreshToken, clear } = useAuthStore.getState();
+  try {
+    if (refreshToken) {
+      await api.post("/auth/logout", { refresh_token: refreshToken });
     }
-    clear();
-    document.cookie = "cg_access_token=; path=/; max-age=0";
-    router.push("/login");
+  } catch (err) {
+    console.error("Logout API failed:", err);
   }
+  clear();
+  await fetch("/api/auth/session", { method: "DELETE" });
+  window.location.href = "/login";
+}
 
   // ── Search ───────────────────────────────────────────────────────────────
   const runSearch = useCallback(async (q: string) => {
