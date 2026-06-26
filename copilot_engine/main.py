@@ -33,7 +33,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://coachgenie-phase1.onrender.com"
+        "https://coachgenie-phase1.onrender.com",
+        "https://coachgenie-frontend.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
