@@ -6,7 +6,7 @@ from pydantic import Field
 class Settings(BaseSettings):
     APP_NAME: str = "CoachingERP"
     DEBUG: bool = Field(default=True, description="Enable debug mode for detailed error messages")
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,https://coachgenie-phase1.onrender.com,https://coachgenie-frontend.onrender.com"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,https://coachgenie-phase1.onrender.com,https://coachgenie-frontend.onrender.com,https://thecoachgenie.in,https://www.thecoachgenie.in"
 
     DATABASE_URL: str = "postgresql+asyncpg://postgres:Aman%40319@localhost:5432/erp"
 
