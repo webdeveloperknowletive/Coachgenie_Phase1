@@ -35,6 +35,8 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "https://coachgenie-phase1.onrender.com",
         "https://coachgenie-frontend.onrender.com",
+        "https://thecoachgenie.in",
+        "https://www.thecoachgenie.in",
     ],
     allow_credentials=True,
     allow_methods=["*"],
