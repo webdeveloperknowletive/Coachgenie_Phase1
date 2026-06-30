@@ -35,7 +35,8 @@ export default function LoginPage() {
           method:  "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-tenant-id":  process.env.NEXT_PUBLIC_TENANT_ID ?? "demo",
+            // "x-tenant-id":  process.env.NEXT_PUBLIC_TENANT_ID ?? "demo",
+            "X-Tenant-Subdomain": process.env.NEXT_PUBLIC_TENANT_SUBDOMAIN ?? "demo",
           },
           body: JSON.stringify(data),
         }
