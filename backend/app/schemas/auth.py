@@ -38,8 +38,8 @@ class RefreshRequest(BaseModel):
 class UserOut(BaseModel):
     id: str
     email: str
-    first_name: str
-    last_name: str
+    first_name: str | None = None
+    last_name: str | None = None
     role: str
     tenant_id: str
 
