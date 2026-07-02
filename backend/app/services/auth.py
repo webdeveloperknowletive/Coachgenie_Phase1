@@ -47,7 +47,31 @@ async def login_user(db: AsyncSession, tenant_id: str, email: str, password: str
     print("PASSWORD HASH:", repr(user.password_hash) if user else None)
     print("HASH LENGTH:", len(user.password_hash) if user and user.password_hash else None)
     
-    if not user or not user.is_active or not verify_password(password, user.password_hash):
+    # if not user or not user.is_active or not verify_password(password, user.password_hash):
+    #     raise UnauthorizedError("Invalid credentials.")
+    print("=" * 50)
+    print("Tenant ID:", tenant_id)
+    print("Email:", email)
+    print("User Found:", user is not None)
+    
+    if user:
+        print("DB Email:", user.email)
+        print("DB Tenant:", user.tenant_id)
+        print("Active:", user.is_active)
+        print("Stored Hash:", user.password_hash)
+    
+        password_ok = verify_password(password, user.password_hash)
+        print("Password Match:", password_ok)
+    
+        if not user.is_active:
+            print("FAILED: User inactive")
+    
+        if not password_ok:
+            print("FAILED: Password mismatch")
+    else:
+        print("FAILED: User not found")
+    
+    if not user or not user.is_active or not password_ok:
         raise UnauthorizedError("Invalid credentials.")
 
     payload = {
